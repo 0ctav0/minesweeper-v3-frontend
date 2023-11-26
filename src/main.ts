@@ -1,35 +1,75 @@
-import { clearAt, drawCells, drawImageAt, initCanvas } from "./canvas";
-import { loadImageResources } from "./resources";
+import {
+  drawCanvas,
+  getCellNumberByOffset,
+  initCanvas,
+  renderSelectedCell,
+} from "./canvas";
+import { CELL_SIZES } from "./consts";
+import { GameMap } from "./game.map";
+import { images, loadImageResources } from "./resources";
 import "./style.css";
-
-// const WIDTH = 300;
-// const HEIGH = 300;
 
 const canvas = document.getElementById("game");
 if (!(canvas instanceof HTMLCanvasElement))
   throw new Error("canvas is not a canvas");
 const ctx = canvas.getContext("2d");
 if (!ctx) throw new Error("canvas's 2d context is null");
-ctx;
 
 initCanvas(canvas);
+
+let selectedCell: { x: number; y: number };
+
+const map = new GameMap();
+
 loadImageResources((images) => {
-  drawCells(ctx, images.cell);
+  render(ctx);
+  // disable context menu
   canvas.oncontextmenu = () => false;
-  canvas.onmousedown = (event) => {
-    console.debug(event);
-    event.preventDefault();
-    event.stopPropagation();
+  // on hover show selected cell
+  canvas.onmousemove = (event) => {
     const x = event.offsetX;
     const y = event.offsetY;
-    clearAt(ctx, x, y);
+    selectedCell = {
+      x: getCellNumberByOffset(x, CELL_SIZES[0]),
+      y: getCellNumberByOffset(y, CELL_SIZES[1]),
+    };
+    console.debug("cell", selectedCell);
+    requestAnimationFrame(gameLoop);
+  };
+  // on click
+  canvas.onmousedown = (event) => {
+    const offsetX = event.offsetX;
+    const offsetY = event.offsetY;
+    const x = getCellNumberByOffset(offsetX, CELL_SIZES[0]);
+    const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
     switch (event.button) {
       case 0: //left mouse click
-        drawImageAt(ctx, images.mine, x, y);
+        map.openAt(x, y);
         break;
       case 2: //right click
-        drawImageAt(ctx, images.flag, x, y);
+        map.flagAt(x, y);
         break;
     }
+    requestAnimationFrame(gameLoop);
   };
 });
+
+// game loop
+
+function gameLoop() {
+  if (!ctx) throw new Error("canvas's 2d context is null");
+  console.debug(map);
+  render(ctx);
+}
+
+/**
+ * render all types of staff
+ */
+export function render(
+  ctx: CanvasRenderingContext2D
+  // cells: Record<string, Cell>
+) {
+  drawCanvas(ctx, images, map);
+
+  renderSelectedCell(ctx, images.selectedCell, selectedCell, map);
+}

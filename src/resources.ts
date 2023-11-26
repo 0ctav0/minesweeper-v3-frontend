@@ -1,6 +1,6 @@
 import { CELL_SIZES } from "./consts";
 
-const images = {
+export const images = {
   cell: new Image(CELL_SIZES[0], CELL_SIZES[1]),
   selectedCell: new Image(CELL_SIZES[0], CELL_SIZES[1]),
   flag: new Image(CELL_SIZES[0], CELL_SIZES[1]),
@@ -11,8 +11,8 @@ images.selectedCell.src = "/img/selected-cell.svg";
 images.flag.src = "/img/flag.svg";
 images.mine.src = "/img/mine.svg";
 
-type ImagesObject = typeof images;
-type ImageKeys = keyof ImagesObject;
+export type ImagesObject = typeof images;
+export type ImageKeys = keyof ImagesObject;
 
 export function loadImageResources(
   onLoadAllResources: (images: ImagesObject) => void
