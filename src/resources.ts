@@ -1,4 +1,4 @@
-import { CELL_SIZES } from "./consts";
+import { CELL_SIZES } from "./constants";
 
 export const images = {
   cell: new Image(CELL_SIZES[0], CELL_SIZES[1]),

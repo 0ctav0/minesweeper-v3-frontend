@@ -2,9 +2,10 @@ import {
   drawCanvas,
   getCellNumberByOffset,
   initCanvas,
+  initContext,
   renderSelectedCell,
 } from "./canvas";
-import { CELL_SIZES } from "./consts";
+import { CELL_SIZES } from "./constants";
 import { Game } from "./game";
 import { images, sounds, loadResources } from "./resources";
 import "./style.css";
@@ -16,6 +17,7 @@ const ctx = canvas.getContext("2d");
 if (!ctx) throw new Error("canvas's 2d context is null");
 
 initCanvas(canvas);
+initContext(ctx);
 
 let selectedCell: { x: number; y: number };
 

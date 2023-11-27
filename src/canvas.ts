@@ -1,4 +1,13 @@
-import { CELLS_COUNTS, CELL_SIZES, FLAG_SIZES } from "./consts";
+import {
+  BACKGROUND_COLOR,
+  CELLS_COUNTS,
+  CELL_SIZES,
+  COLOR_NUMBERS,
+  FLAG_SIZES,
+  NUMBER_FONT,
+  NUMBER_X_OFFSET,
+  NUMBER_Y_OFFSET,
+} from "./constants";
 import { Game } from "./game";
 import { ImagesObject } from "./resources";
 
@@ -33,6 +42,13 @@ export function drawCanvas(
         );
         if (cell.hasMine) {
           drawImageAt(ctx, images.mine, x, y, CELL_SIZES[0], CELL_SIZES[1]);
+        } else if (cell.nearMines) {
+          ctx.fillStyle = COLOR_NUMBERS[cell.nearMines - 1];
+          ctx.fillText(
+            String(cell.nearMines),
+            x * CELL_SIZES[0] + NUMBER_X_OFFSET,
+            y * CELL_SIZES[1] + NUMBER_Y_OFFSET
+          );
         }
       } else {
         // not open cell
@@ -94,8 +110,12 @@ export function drawImageAt(
   );
 }
 
+export function initContext(ctx: CanvasRenderingContext2D) {
+  ctx.font = NUMBER_FONT;
+}
+
 export function initCanvas(canvas: HTMLCanvasElement) {
-  canvas.style.background = "grey";
+  canvas.style.background = BACKGROUND_COLOR;
   canvas.width = CELLS_COUNTS[0] * CELL_SIZES[0];
   canvas.height = CELLS_COUNTS[1] * CELL_SIZES[1];
 }

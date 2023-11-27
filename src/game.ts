@@ -1,4 +1,4 @@
-import { CELLS_COUNTS, MINES_NUMBER } from "./consts";
+import { CELLS_COUNTS, MINES_NUMBER } from "./constants";
 import { random } from "./helpers";
 
 type GameState = "IN_PROGRESS" | "PAUSE" | "END";
@@ -8,6 +8,7 @@ export class Cell {
   hasMine: boolean;
   hasFlag = false;
   open = false;
+  nearMines = 0;
 
   constructor(mine: boolean) {
     this.hasMine = mine;
