@@ -1,9 +1,12 @@
 import {
   BACKGROUND_COLOR,
-  CELLS_COUNTS,
-  CELL_SIZES,
+  CELLS_COUNTS_X,
+  CELLS_COUNTS_Y,
+  CELL_SIZES_X,
+  CELL_SIZES_Y,
   COLOR_NUMBERS,
-  FLAG_SIZES,
+  FLAG_SIZES_X,
+  FLAG_SIZES_Y,
   NUMBER_FONT,
   NUMBER_X_OFFSET,
   NUMBER_Y_OFFSET,
@@ -29,25 +32,25 @@ export function drawCanvas(
   images: ImagesObject,
   game: Game
 ) {
-  for (let x = 0; x < CELLS_COUNTS[0]; x++) {
-    for (let y = 0; y < CELLS_COUNTS[1]; y++) {
+  for (let x = 0; x < CELLS_COUNTS_X; x++) {
+    for (let y = 0; y < CELLS_COUNTS_Y; y++) {
       const cell = game.getCell(x, y);
       if (cell.opened) {
         // open cell
         ctx.clearRect(
-          x * CELL_SIZES[0],
-          y * CELL_SIZES[1],
-          CELL_SIZES[0],
-          CELL_SIZES[1]
+          x * CELL_SIZES_X,
+          y * CELL_SIZES_Y,
+          CELL_SIZES_X,
+          CELL_SIZES_Y
         );
         if (cell.mined) {
-          drawImageAt(ctx, images.mine, x, y, CELL_SIZES[0], CELL_SIZES[1]);
+          drawImageAt(ctx, images.mine, x, y, CELL_SIZES_X, CELL_SIZES_Y);
         } else if (cell.nearbyMines) {
           ctx.fillStyle = COLOR_NUMBERS[cell.nearbyMines - 1];
           ctx.fillText(
             String(cell.nearbyMines),
-            x * CELL_SIZES[0] + NUMBER_X_OFFSET,
-            y * CELL_SIZES[1] + NUMBER_Y_OFFSET
+            x * CELL_SIZES_X + NUMBER_X_OFFSET,
+            y * CELL_SIZES_Y + NUMBER_Y_OFFSET
           );
           ctx.fillStyle = BACKGROUND_COLOR;
         }
@@ -55,13 +58,13 @@ export function drawCanvas(
         // not open cell
         ctx.drawImage(
           images.cell,
-          x * CELL_SIZES[0],
-          y * CELL_SIZES[1],
-          CELL_SIZES[0],
-          CELL_SIZES[1]
+          x * CELL_SIZES_X,
+          y * CELL_SIZES_Y,
+          CELL_SIZES_X,
+          CELL_SIZES_Y
         );
         if (cell.flagged) {
-          drawImageAt(ctx, images.flag, x, y, FLAG_SIZES[0], FLAG_SIZES[1]);
+          drawImageAt(ctx, images.flag, x, y, FLAG_SIZES_X, FLAG_SIZES_Y);
         }
       }
     }
@@ -85,10 +88,10 @@ export function clearAtByOffset(
   offsetY: number
 ) {
   ctx.clearRect(
-    getCellPositionOnCanvasByOffset(offsetX, CELL_SIZES[0]),
-    getCellPositionOnCanvasByOffset(offsetY, CELL_SIZES[1]),
-    CELL_SIZES[0],
-    CELL_SIZES[1]
+    getCellPositionOnCanvasByOffset(offsetX, CELL_SIZES_X),
+    getCellPositionOnCanvasByOffset(offsetY, CELL_SIZES_Y),
+    CELL_SIZES_X,
+    CELL_SIZES_Y
   );
 }
 
@@ -102,12 +105,12 @@ export function drawImageAt(
 ) {
   ctx.drawImage(
     image,
-    x * CELL_SIZES[0] +
+    x * CELL_SIZES_X +
       // if size defined then add padding to put at middle
-      (sizeX ? (CELL_SIZES[0] - sizeX) / 2 : 0),
-    y * CELL_SIZES[1] + (sizeY ? (CELL_SIZES[1] - sizeY) / 2 : 0),
-    sizeX ? sizeX : CELL_SIZES[0],
-    sizeY ? sizeY : CELL_SIZES[1]
+      (sizeX ? (CELL_SIZES_X - sizeX) / 2 : 0),
+    y * CELL_SIZES_Y + (sizeY ? (CELL_SIZES_Y - sizeY) / 2 : 0),
+    sizeX ? sizeX : CELL_SIZES_X,
+    sizeY ? sizeY : CELL_SIZES_Y
   );
 }
 
@@ -117,6 +120,6 @@ export function initContext(ctx: CanvasRenderingContext2D) {
 
 export function initCanvas(canvas: HTMLCanvasElement) {
   canvas.style.background = BACKGROUND_COLOR;
-  canvas.width = CELLS_COUNTS[0] * CELL_SIZES[0];
-  canvas.height = CELLS_COUNTS[1] * CELL_SIZES[1];
+  canvas.width = CELLS_COUNTS_X * CELL_SIZES_X;
+  canvas.height = CELLS_COUNTS_Y * CELL_SIZES_Y;
 }

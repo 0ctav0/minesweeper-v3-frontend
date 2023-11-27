@@ -1,10 +1,10 @@
-import { CELL_SIZES } from "./constants";
+import { CELL_SIZES_X, CELL_SIZES_Y } from "./constants";
 
 export const images = {
-  cell: new Image(CELL_SIZES[0], CELL_SIZES[1]),
-  selectedCell: new Image(CELL_SIZES[0], CELL_SIZES[1]),
-  flag: new Image(CELL_SIZES[0], CELL_SIZES[1]),
-  mine: new Image(CELL_SIZES[0], CELL_SIZES[1]),
+  cell: new Image(CELL_SIZES_X, CELL_SIZES_Y),
+  selectedCell: new Image(CELL_SIZES_X, CELL_SIZES_Y),
+  flag: new Image(CELL_SIZES_X, CELL_SIZES_Y),
+  mine: new Image(CELL_SIZES_X, CELL_SIZES_Y),
 };
 images.cell.src = "/img/cell.svg";
 images.selectedCell.src = "/img/selected-cell.svg";

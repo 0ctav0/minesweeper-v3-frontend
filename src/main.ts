@@ -5,7 +5,12 @@ import {
   initContext,
   renderSelectedCell,
 } from "./canvas";
-import { CELLS_COUNTS, CELL_SIZES } from "./constants";
+import {
+  CELL_SIZES_X,
+  CELL_SIZES_Y,
+  CELLS_COUNTS_X,
+  CELLS_COUNTS_Y,
+} from "./constants";
 import { Game } from "./game";
 import { images, sounds } from "./resources";
 import "./style.css";
@@ -30,17 +35,17 @@ canvas.oncontextmenu = () => false;
 canvas.onmousemove = (event) => {
   const offsetX = event.offsetX;
   const offsetY = event.offsetY;
-  const x = getCellNumberByOffset(offsetX, CELL_SIZES[0]);
-  const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
-  if (x >= 0 && x < CELLS_COUNTS[0] && y >= 0 && y < CELLS_COUNTS[1])
+  const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
+  const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
+  if (x >= 0 && x < CELLS_COUNTS_X && y >= 0 && y < CELLS_COUNTS_Y)
     selectedCell = { x, y };
 };
 // on click
 canvas.onmousedown = (event) => {
   const offsetX = event.offsetX;
   const offsetY = event.offsetY;
-  const x = getCellNumberByOffset(offsetX, CELL_SIZES[0]);
-  const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
+  const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
+  const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
   switch (event.button) {
     case 0: //left mouse click
       game.openAt(x, y);

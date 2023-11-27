@@ -1,7 +1,11 @@
-export const CELL_SIZES = [30, 30];
-export const CELLS_COUNTS = [10, 10];
+export const CELL_SIZES_X = 30;
+export const CELL_SIZES_Y = 30;
 
-export const FLAG_SIZES = [20, 20];
+export const CELLS_COUNTS_X = 10;
+export const CELLS_COUNTS_Y = 10;
+
+export const FLAG_SIZES_X = 20;
+export const FLAG_SIZES_Y = 20;
 
 export const MINES_NUMBER = 3;
 
