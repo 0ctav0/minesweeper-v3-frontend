@@ -15,6 +15,9 @@ export class Cell {
   }
 }
 
+/**
+ * Contains all game's data and logic related to game mechanics
+ */
 export class Game {
   state: GameState = "IN_PROGRESS";
   eventQueue: Event[] = [];

@@ -11,30 +11,23 @@ import {
   NUMBER_X_OFFSET,
   NUMBER_Y_OFFSET,
 } from "./constants";
+import { GameController } from "./controller";
 import { Game } from "./game";
-import { ImagesObject } from "./resources";
+import { images } from "./resources";
 
-export function renderSelectedCell(
-  ctx: CanvasRenderingContext2D,
-  image: HTMLImageElement,
-  selectedCell: { x: number; y: number },
-  game: Game
-) {
+export function renderSelectedCell(controller: GameController) {
+  const { ctx, selectedCell, model } = controller;
   if (!selectedCell) return;
-  const cell = game.getCell(selectedCell.x, selectedCell.y);
+  const cell = model.getCell(selectedCell.x, selectedCell.y);
   if (!cell.opened && !cell.flagged) {
-    drawImageAt(ctx, image, selectedCell.x, selectedCell.y);
+    drawImageAt(ctx, images.selectedCell, selectedCell.x, selectedCell.y);
   }
 }
 
-export function drawCanvas(
-  ctx: CanvasRenderingContext2D,
-  images: ImagesObject,
-  game: Game
-) {
+export function drawCanvas(ctx: CanvasRenderingContext2D, model: Game) {
   for (let x = 0; x < CELLS_COUNTS_X; x++) {
     for (let y = 0; y < CELLS_COUNTS_Y; y++) {
-      const cell = game.getCell(x, y);
+      const cell = model.getCell(x, y);
       if (cell.opened) {
         // open cell
         ctx.clearRect(
