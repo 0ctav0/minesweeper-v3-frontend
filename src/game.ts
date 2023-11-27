@@ -2,14 +2,13 @@ import { CELLS_COUNTS, MINES_NUMBER } from "./constants";
 import { random } from "./helpers";
 
 type GameState = "IN_PROGRESS" | "PAUSE" | "FAILURE" | "WIN";
-type Event = { type: "PLAY_DEATH"; payload?: any };
+type Event = { type: "PLAY_DEATH" | "WIN"; payload?: any };
 
 export class Cell {
   mined: boolean;
   flagged = false;
   opened = false;
   nearbyMines = 0;
-  __dirty = false; // for internal use; used in explore map's algorithm; not used in game logic
 
   constructor(mine: boolean) {
     this.mined = mine;
@@ -61,14 +60,12 @@ export class Game {
         this.eventQueue.push({ type: "PLAY_DEATH" });
       } else {
         this.exploreMap(x, y);
-        this.__cleanCells();
       }
     }
   }
 
   private exploreMap(startX: number, startY: number) {
     const startingCell = this.getCell(startX, startY);
-    startingCell.__dirty = true;
     const mines = this.getNearbyMines(startX, startY);
     console.debug(
       "start",
@@ -92,8 +89,7 @@ export class Game {
         y++
       ) {
         const cell = this.getCell(x, y);
-        if ((x === startX && y === startY) || cell.opened || cell.__dirty)
-          continue; // do not check already opened/checked cell
+        if (cell.opened) continue; // do not check already opened cell
         console.debug("iter", x, y);
         this.exploreMap(x, y);
       }
@@ -113,19 +109,10 @@ export class Game {
         y++
       ) {
         const cell = this.getCell(x, y);
-        if (x === startX && y === startY) continue; // do not check itself opened cell
         if (cell.mined) nearbyMines++;
       }
     }
     return nearbyMines;
-  }
-
-  private __cleanCells() {
-    for (let x = 0; x < CELLS_COUNTS[0]; x++) {
-      for (let y = 0; y < CELLS_COUNTS[1]; y++) {
-        this.getCell(x, y).__dirty = false;
-      }
-    }
   }
 
   flagAt(x: number, y: number) {

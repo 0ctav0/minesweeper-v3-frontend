@@ -16,6 +16,7 @@ export type ImageKeys = keyof ImagesObject;
 
 export const sounds = {
   death: new Audio("/sounds/pig-bomb.mp3"),
+  win: new Audio("/sounds/win.wav"),
 };
 
 export type SoundsObject = typeof sounds;

@@ -69,6 +69,10 @@ const manageEventQueue = () => {
         canvas.oncontextmenu = () => true; // return back context menu
         sounds.death.play();
         break;
+      case "WIN":
+        canvas.oncontextmenu = () => true; // return back context menu
+        sounds.win.play();
+        break;
     }
   }
 };
