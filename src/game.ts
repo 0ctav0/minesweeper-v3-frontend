@@ -60,8 +60,23 @@ export class Game {
         this.eventQueue.push({ type: "PLAY_DEATH" });
       } else {
         this.exploreMap(x, y);
+        if (this.isWin()) {
+          this.state = "WIN";
+          this.eventQueue.push({ type: "WIN" });
+        }
       }
     }
+  }
+
+  private isWin() {
+    let opened = 0;
+    for (let x = 0; x < CELLS_COUNTS[0]; x++) {
+      for (let y = 0; y < CELLS_COUNTS[1]; y++) {
+        const cell = this.getCell(x, y);
+        if (cell.opened) opened++;
+      }
+    }
+    return CELLS_COUNTS[0] * CELLS_COUNTS[1] - opened === MINES_NUMBER;
   }
 
   private exploreMap(startX: number, startY: number) {
