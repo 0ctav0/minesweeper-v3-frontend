@@ -19,7 +19,7 @@ export function renderSelectedCell(
 ) {
   if (!selectedCell) return;
   const cell = game.getCell(selectedCell.x, selectedCell.y);
-  if (!cell.open && !cell.hasFlag) {
+  if (!cell.opened && !cell.flagged) {
     drawImageAt(ctx, image, selectedCell.x, selectedCell.y);
   }
 }
@@ -32,7 +32,7 @@ export function drawCanvas(
   for (let x = 0; x < CELLS_COUNTS[0]; x++) {
     for (let y = 0; y < CELLS_COUNTS[1]; y++) {
       const cell = game.getCell(x, y);
-      if (cell.open) {
+      if (cell.opened) {
         // open cell
         ctx.clearRect(
           x * CELL_SIZES[0],
@@ -40,15 +40,16 @@ export function drawCanvas(
           CELL_SIZES[0],
           CELL_SIZES[1]
         );
-        if (cell.hasMine) {
+        if (cell.mined) {
           drawImageAt(ctx, images.mine, x, y, CELL_SIZES[0], CELL_SIZES[1]);
-        } else if (cell.nearMines) {
-          ctx.fillStyle = COLOR_NUMBERS[cell.nearMines - 1];
+        } else if (cell.nearbyMines) {
+          ctx.fillStyle = COLOR_NUMBERS[cell.nearbyMines - 1];
           ctx.fillText(
-            String(cell.nearMines),
+            String(cell.nearbyMines),
             x * CELL_SIZES[0] + NUMBER_X_OFFSET,
             y * CELL_SIZES[1] + NUMBER_Y_OFFSET
           );
+          ctx.fillStyle = BACKGROUND_COLOR;
         }
       } else {
         // not open cell
@@ -59,7 +60,7 @@ export function drawCanvas(
           CELL_SIZES[0],
           CELL_SIZES[1]
         );
-        if (cell.hasFlag) {
+        if (cell.flagged) {
           drawImageAt(ctx, images.flag, x, y, FLAG_SIZES[0], FLAG_SIZES[1]);
         }
       }
