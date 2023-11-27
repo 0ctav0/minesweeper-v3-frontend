@@ -21,7 +21,7 @@ export const sounds = {
 export type SoundsObject = typeof sounds;
 export type SoundKeys = keyof SoundsObject;
 
-export function loadResources(
+export function onloadResources(
   onLoadAllResources: (images: ImagesObject, sounds: SoundsObject) => void
 ) {
   Promise.all([

@@ -5,9 +5,9 @@ import {
   initContext,
   renderSelectedCell,
 } from "./canvas";
-import { CELL_SIZES } from "./constants";
+import { CELLS_COUNTS, CELL_SIZES } from "./constants";
 import { Game } from "./game";
-import { images, sounds, loadResources } from "./resources";
+import { images, sounds } from "./resources";
 import "./style.css";
 
 const canvas = document.getElementById("game");
@@ -22,36 +22,34 @@ initContext(ctx);
 let selectedCell: { x: number; y: number };
 
 const game = new Game();
+(window as any).game = game; // for debug purpose TODO: delete
 
-loadResources(() => {
-  render(ctx);
-  // disable context menu
-  canvas.oncontextmenu = () => false;
-  // on hover show selected cell
-  canvas.onmousemove = (event) => {
-    const x = event.offsetX;
-    const y = event.offsetY;
-    selectedCell = {
-      x: getCellNumberByOffset(x, CELL_SIZES[0]),
-      y: getCellNumberByOffset(y, CELL_SIZES[1]),
-    };
-  };
-  // on click
-  canvas.onmousedown = (event) => {
-    const offsetX = event.offsetX;
-    const offsetY = event.offsetY;
-    const x = getCellNumberByOffset(offsetX, CELL_SIZES[0]);
-    const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
-    switch (event.button) {
-      case 0: //left mouse click
-        game.openAt(x, y);
-        break;
-      case 2: //right click
-        game.flagAt(x, y);
-        break;
-    }
-  };
-});
+// disable context menu
+canvas.oncontextmenu = () => false;
+// on hover show selected cell
+canvas.onmousemove = (event) => {
+  const offsetX = event.offsetX;
+  const offsetY = event.offsetY;
+  const x = getCellNumberByOffset(offsetX, CELL_SIZES[0]);
+  const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
+  if (x >= 0 && x < CELLS_COUNTS[0] && y >= 0 && y < CELLS_COUNTS[1])
+    selectedCell = { x, y };
+};
+// on click
+canvas.onmousedown = (event) => {
+  const offsetX = event.offsetX;
+  const offsetY = event.offsetY;
+  const x = getCellNumberByOffset(offsetX, CELL_SIZES[0]);
+  const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
+  switch (event.button) {
+    case 0: //left mouse click
+      game.openAt(x, y);
+      break;
+    case 2: //right click
+      game.flagAt(x, y);
+      break;
+  }
+};
 
 // game loop
 
