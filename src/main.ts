@@ -33,8 +33,6 @@ loadImageResources((images) => {
       x: getCellNumberByOffset(x, CELL_SIZES[0]),
       y: getCellNumberByOffset(y, CELL_SIZES[1]),
     };
-    console.debug("cell", selectedCell);
-    requestAnimationFrame(gameLoop);
   };
   // on click
   canvas.onmousedown = (event) => {
@@ -50,17 +48,19 @@ loadImageResources((images) => {
         map.flagAt(x, y);
         break;
     }
-    requestAnimationFrame(gameLoop);
   };
 });
 
 // game loop
 
 function gameLoop() {
+  console.debug(performance.now());
   if (!ctx) throw new Error("canvas's 2d context is null");
-  console.debug(map);
   render(ctx);
+  requestAnimationFrame(gameLoop);
 }
+
+requestAnimationFrame(gameLoop);
 
 /**
  * render all types of staff
