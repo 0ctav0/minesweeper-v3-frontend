@@ -1,15 +1,15 @@
 import { CELLS_COUNTS, CELL_SIZES, FLAG_SIZES } from "./consts";
-import { GameMap } from "./game.map";
+import { Game } from "./game";
 import { ImagesObject } from "./resources";
 
 export function renderSelectedCell(
   ctx: CanvasRenderingContext2D,
   image: HTMLImageElement,
   selectedCell: { x: number; y: number },
-  map: GameMap
+  game: Game
 ) {
   if (!selectedCell) return;
-  const cell = map.getCell(selectedCell.x, selectedCell.y);
+  const cell = game.getCell(selectedCell.x, selectedCell.y);
   if (!cell.open && !cell.hasFlag) {
     drawImageAt(ctx, image, selectedCell.x, selectedCell.y);
   }
@@ -18,19 +18,24 @@ export function renderSelectedCell(
 export function drawCanvas(
   ctx: CanvasRenderingContext2D,
   images: ImagesObject,
-  map: GameMap
+  game: Game
 ) {
   for (let x = 0; x < CELLS_COUNTS[0]; x++) {
     for (let y = 0; y < CELLS_COUNTS[1]; y++) {
-      const cell = map.getCell(x, y);
+      const cell = game.getCell(x, y);
       if (cell.open) {
+        // open cell
         ctx.clearRect(
           x * CELL_SIZES[0],
           y * CELL_SIZES[1],
           CELL_SIZES[0],
           CELL_SIZES[1]
         );
+        if (cell.hasMine) {
+          drawImageAt(ctx, images.mine, x, y, CELL_SIZES[0], CELL_SIZES[1]);
+        }
       } else {
+        // not open cell
         ctx.drawImage(
           images.cell,
           x * CELL_SIZES[0],

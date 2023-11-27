@@ -1,6 +1,9 @@
 import { CELLS_COUNTS, MINES_NUMBER } from "./consts";
 import { random } from "./helpers";
 
+type GameState = "IN_PROGRESS" | "PAUSE" | "END";
+type Event = { type: "PLAY_DEATH"; payload?: any };
+
 export class Cell {
   hasMine: boolean;
   hasFlag = false;
@@ -11,7 +14,9 @@ export class Cell {
   }
 }
 
-export class GameMap {
+export class Game {
+  state: GameState = "IN_PROGRESS";
+  eventQueue: Event[] = [];
   private cells: Record<string, Cell> = {};
 
   constructor() {
@@ -45,14 +50,25 @@ export class GameMap {
   }
 
   openAt(x: number, y: number) {
+    if (this.state !== "IN_PROGRESS") return;
     const cell = this.getCell(x, y);
     if (!cell.hasFlag) {
       cell.open = true;
+      if (cell.hasMine) {
+        this.state = "END";
+        this.eventQueue.push({ type: "PLAY_DEATH" });
+      }
+      this.exploreMap(x, y);
     }
-    //explore map
+  }
+
+  private exploreMap(startX: number, startY: number) {
+    const cell = this.getCell(startX, startY);
   }
 
   flagAt(x: number, y: number) {
-    this.getCell(x, y).hasFlag = true;
+    if (this.state !== "IN_PROGRESS") return;
+    const cell = this.getCell(x, y);
+    cell.hasFlag = !cell.hasFlag;
   }
 }

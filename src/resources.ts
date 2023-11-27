@@ -14,20 +14,31 @@ images.mine.src = "/img/mine.svg";
 export type ImagesObject = typeof images;
 export type ImageKeys = keyof ImagesObject;
 
-export function loadImageResources(
-  onLoadAllResources: (images: ImagesObject) => void
+export const sounds = {
+  death: new Audio("/sounds/pig-bomb.mp3"),
+};
+
+export type SoundsObject = typeof sounds;
+export type SoundKeys = keyof SoundsObject;
+
+export function loadResources(
+  onLoadAllResources: (images: ImagesObject, sounds: SoundsObject) => void
 ) {
-  Promise.all(
+  Promise.all([
     Object.keys(images).map((key) => {
       const image = images[key as ImageKeys];
       return new Promise((resolve) => (image.onload = image.onerror = resolve));
-    })
-  ).then((results) =>
+    }),
+    Object.keys(sounds).map((key) => {
+      const sound = sounds[key as SoundKeys];
+      return new Promise((resolve) => (sound.onload = sound.onerror = resolve));
+    }),
+  ]).then((results) =>
     results.every((res) => {
       if (res) {
-        onLoadAllResources(images);
+        onLoadAllResources(images, sounds);
       } else {
-        throw new Error("some images didn't loaded successfully");
+        throw new Error("some resources didn't loaded successfully");
       }
     })
   );

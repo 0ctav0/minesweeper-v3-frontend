@@ -5,8 +5,8 @@ import {
   renderSelectedCell,
 } from "./canvas";
 import { CELL_SIZES } from "./consts";
-import { GameMap } from "./game.map";
-import { images, loadImageResources } from "./resources";
+import { Game } from "./game";
+import { images, sounds, loadResources } from "./resources";
 import "./style.css";
 
 const canvas = document.getElementById("game");
@@ -19,9 +19,9 @@ initCanvas(canvas);
 
 let selectedCell: { x: number; y: number };
 
-const map = new GameMap();
+const game = new Game();
 
-loadImageResources((images) => {
+loadResources(() => {
   render(ctx);
   // disable context menu
   canvas.oncontextmenu = () => false;
@@ -42,10 +42,10 @@ loadImageResources((images) => {
     const y = getCellNumberByOffset(offsetY, CELL_SIZES[1]);
     switch (event.button) {
       case 0: //left mouse click
-        map.openAt(x, y);
+        game.openAt(x, y);
         break;
       case 2: //right click
-        map.flagAt(x, y);
+        game.flagAt(x, y);
         break;
     }
   };
@@ -53,23 +53,33 @@ loadImageResources((images) => {
 
 // game loop
 
-function gameLoop() {
-  console.debug(performance.now());
-  if (!ctx) throw new Error("canvas's 2d context is null");
+const gameLoop = () => {
+  manageEventQueue();
   render(ctx);
   requestAnimationFrame(gameLoop);
-}
+};
 
 requestAnimationFrame(gameLoop);
+
+const manageEventQueue = () => {
+  const event = game.eventQueue.pop();
+  if (event) {
+    switch (event.type) {
+      case "PLAY_DEATH":
+        canvas.oncontextmenu = () => true; // return back context menu
+        sounds.death.play();
+        break;
+    }
+  }
+};
 
 /**
  * render all types of staff
  */
-export function render(
-  ctx: CanvasRenderingContext2D
-  // cells: Record<string, Cell>
-) {
-  drawCanvas(ctx, images, map);
+export function render(ctx: CanvasRenderingContext2D) {
+  drawCanvas(ctx, images, game);
 
-  renderSelectedCell(ctx, images.selectedCell, selectedCell, map);
+  if (game.state !== "IN_PROGRESS") return;
+
+  renderSelectedCell(ctx, images.selectedCell, selectedCell, game);
 }
