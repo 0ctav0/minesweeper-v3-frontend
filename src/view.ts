@@ -12,7 +12,7 @@ import {
   NUMBER_Y_OFFSET,
 } from "./constants";
 import { GameController } from "./controller";
-import { Game } from "./game";
+import { GameModel } from "./model";
 import { images } from "./resources";
 
 export function renderSelectedCell(controller: GameController) {
@@ -24,7 +24,7 @@ export function renderSelectedCell(controller: GameController) {
   }
 }
 
-export function drawCanvas(ctx: CanvasRenderingContext2D, model: Game) {
+export function drawCanvas(ctx: CanvasRenderingContext2D, model: GameModel) {
   for (let x = 0; x < CELLS_COUNTS_X; x++) {
     for (let y = 0; y < CELLS_COUNTS_Y; y++) {
       const cell = model.getCell(x, y);

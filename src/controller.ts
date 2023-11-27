@@ -1,15 +1,11 @@
-import {
-  drawCanvas,
-  getCellNumberByOffset,
-  renderSelectedCell,
-} from "./canvas";
+import { drawCanvas, getCellNumberByOffset, renderSelectedCell } from "./view";
 import {
   CELLS_COUNTS_X,
   CELLS_COUNTS_Y,
   CELL_SIZES_X,
   CELL_SIZES_Y,
 } from "./constants";
-import { Game } from "./game";
+import { GameModel } from "./model";
 import { sounds } from "./resources";
 
 /**
@@ -19,12 +15,12 @@ export class GameController {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   selectedCell?: { x: number; y: number };
-  model: Game;
+  model: GameModel;
 
   constructor(
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
-    model: Game
+    model: GameModel
   ) {
     this.canvas = canvas;
     this.ctx = ctx;
