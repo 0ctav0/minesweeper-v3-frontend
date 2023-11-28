@@ -7,7 +7,14 @@
     <title>Minesweeper</title>
   </head>
   <body>
-    <canvas id="game">Your browser doesn't support canvas tag element</canvas>
+    <div id="information-panel">
+      <div class="element">
+        <img src="/img/mine.svg" class="img" /><span id="mines"></span>
+      </div>
+    </div>
+    <div id="game-panel">
+      <canvas id="game">Your browser doesn't support canvas tag element</canvas>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

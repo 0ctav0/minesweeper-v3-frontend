@@ -23,4 +23,35 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: lightgray;
+  height: 100vh;
+}
+
+#information-panel {
+  height: 40px;
+  width: 100%;
+  background-color: lightcoral;
+  border-bottom: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.element {
+  display: flex;
+  gap: 4px;
+}
+
+.element img {
+  width: 30px;
+  height: 30px;
+  -webkit-user-drag: none;
+}
+
+.element span {
+  font-size: 20px;
+}
+
+#game-panel {
+  overflow: auto;
 }

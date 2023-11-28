@@ -82,15 +82,20 @@ export class GameModel {
     return CELLS_COUNTS_X * CELLS_COUNTS_Y - opened === MINES_NUMBER;
   }
 
+  getFlagsNumber() {
+    let flags = 0;
+    for (let x = 0; x < CELLS_COUNTS_X; x++) {
+      for (let y = 0; y < CELLS_COUNTS_Y; y++) {
+        const cell = this.getCell(x, y);
+        if (cell.flagged) flags++;
+      }
+    }
+    return flags;
+  }
+
   private exploreMap(startX: number, startY: number) {
     const startingCell = this.getCell(startX, startY);
     const mines = this.getNearbyMines(startX, startY);
-    console.debug(
-      "start",
-      startX,
-      startY,
-      mines ? `mines: ${mines}` : "no mines"
-    );
     startingCell.opened = true;
     if (mines) {
       startingCell.nearbyMines = mines;
@@ -108,7 +113,6 @@ export class GameModel {
       ) {
         const cell = this.getCell(x, y);
         if (cell.opened) continue; // do not check already opened cell
-        console.debug("iter", x, y);
         this.exploreMap(x, y);
       }
     }

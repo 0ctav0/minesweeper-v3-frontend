@@ -1,4 +1,12 @@
-import { drawCanvas, getCellNumberByOffset, renderSelectedCell } from "./view";
+import {
+  drawCanvas,
+  getCellNumberByOffset,
+  initCanvas,
+  initContext,
+  initInformationPanel,
+  renderSelectedCell,
+  writeMinesText,
+} from "./view";
 import {
   CELLS_COUNTS_X,
   CELLS_COUNTS_Y,
@@ -26,6 +34,10 @@ export class GameController {
     this.ctx = ctx;
     this.model = model;
 
+    initCanvas(canvas);
+    initContext(ctx);
+    initInformationPanel();
+
     // disable context menu
     canvas.oncontextmenu = () => false;
     // on hover show selected cell
@@ -49,6 +61,8 @@ export class GameController {
           break;
         case 2: //right click
           model.flagAt(x, y);
+          const flags = model.getFlagsNumber();
+          writeMinesText(flags);
           break;
       }
     };
