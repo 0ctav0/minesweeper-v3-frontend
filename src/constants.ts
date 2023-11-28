@@ -7,7 +7,7 @@ export const CELLS_COUNTS_Y = 26;
 export const FLAG_SIZES_X = 20;
 export const FLAG_SIZES_Y = 20;
 
-export const MINES_NUMBER = 50;
+export const MINES_NUMBER = 20;
 
 export const MINES_RATIO =
   (MINES_NUMBER / (CELLS_COUNTS_X * CELLS_COUNTS_Y)) * 100;

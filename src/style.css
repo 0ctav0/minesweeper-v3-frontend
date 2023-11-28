@@ -42,10 +42,11 @@ body {
   gap: 4px;
 }
 
-.element img {
+.element .img {
   width: 30px;
   height: 30px;
-  -webkit-user-drag: none;
+  background-image: url(img/mine.svg);
+  background-size: 100% 100%;
 }
 
 .element span {
