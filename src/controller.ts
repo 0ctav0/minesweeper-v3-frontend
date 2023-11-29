@@ -82,16 +82,22 @@ export class GameController {
     };
   }
 
+  private detachHandlers() {
+    this.canvas.oncontextmenu = () => true; // return back context menu
+  }
+
   manageEventQueue() {
     const event = this.model.eventQueue.pop();
     if (event) {
       switch (event.type) {
         case "PLAY_DEATH":
-          this.canvas.oncontextmenu = () => true; // return back context menu
+          this.detachHandlers();
+          sounds.death.load();
           sounds.death.play();
           break;
         case "WIN":
-          this.canvas.oncontextmenu = () => true; // return back context menu
+          this.detachHandlers();
+          sounds.win.load();
           sounds.win.play();
           break;
       }
