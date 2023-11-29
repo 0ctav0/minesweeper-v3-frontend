@@ -47,6 +47,7 @@ export class GameController {
     startBtn.onclick = () => {
       const mines = getMinesFromInput();
       this.initHandlers();
+      writeMinesText(0, mines);
       this.model.newGame(mines);
     };
   }

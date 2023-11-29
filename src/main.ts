@@ -1,4 +1,4 @@
-import { DEFAULT_MINES_NUMBER } from "./constants";
+import { DEFAULT_MINES_NUMBER, FPS } from "./constants";
 import { GameController } from "./controller";
 import { GameModel } from "./model";
 import "./style.css";
@@ -17,7 +17,7 @@ const controller = new GameController(canvas, ctx, model);
 const gameLoop = () => {
   controller.manageEventQueue();
   controller.render();
-  requestAnimationFrame(gameLoop);
+  setTimeout(() => requestAnimationFrame(gameLoop), FPS);
 };
 
-requestAnimationFrame(gameLoop);
+gameLoop();

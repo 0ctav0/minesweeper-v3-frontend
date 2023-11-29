@@ -1,3 +1,5 @@
+export const FPS = 1000 / 24;
+
 export const CELL_SIZES_X = 30;
 export const CELL_SIZES_Y = 30;
 
