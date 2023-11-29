@@ -13,6 +13,7 @@ import {
   CELLS_COUNTS_Y,
   CELL_SIZES_X,
   CELL_SIZES_Y,
+  FPS,
 } from "./constants";
 import { GameModel } from "./model";
 import { sounds } from "./resources";
@@ -26,12 +27,10 @@ export class GameController {
   selectedCell?: { x: number; y: number };
   model: GameModel;
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    model: GameModel
-  ) {
+  constructor(canvas: HTMLCanvasElement, model: GameModel) {
     this.canvas = canvas;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("canvas's 2d context is null");
     this.ctx = ctx;
     this.model = model;
 
@@ -39,6 +38,7 @@ export class GameController {
     initContext(ctx);
     initInformationPanel(model.mines);
     this.initHandlers();
+    this.gameLoop();
 
     const startBtn = document.querySelector("#start-btn");
     if (!startBtn || !(startBtn instanceof HTMLButtonElement))
@@ -87,7 +87,13 @@ export class GameController {
     this.canvas.oncontextmenu = () => true; // return back context menu
   }
 
-  manageEventQueue() {
+  private gameLoop = () => {
+    this.manageEventQueue();
+    this.render();
+    setTimeout(() => requestAnimationFrame(this.gameLoop), FPS);
+  };
+
+  private manageEventQueue() {
     const event = this.model.eventQueue.pop();
     if (event) {
       switch (event.type) {
@@ -105,10 +111,7 @@ export class GameController {
     }
   }
 
-  /**
-   * render all types of staff
-   */
-  render() {
+  private render() {
     drawCanvas(this.ctx, this.model);
 
     if (this.model.state !== "IN_PROGRESS") return;
