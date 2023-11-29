@@ -1,4 +1,4 @@
-import { CELLS_COUNTS_X, CELLS_COUNTS_Y, MINES_NUMBER } from "./constants";
+import { CELLS_COUNTS_X, CELLS_COUNTS_Y } from "./constants";
 import { random } from "./helpers";
 
 type GameState = "IN_PROGRESS" | "PAUSE" | "FAILURE" | "WIN";
@@ -21,19 +21,32 @@ export class Cell {
 export class GameModel {
   state: GameState = "IN_PROGRESS";
   eventQueue: Event[] = [];
+  mines: number;
   private cells: Record<string, Cell> = {};
 
-  constructor() {
+  constructor(mines: number) {
+    this.mines = mines;
+    this.generateField();
+    this.generateMines();
+  }
+
+  newGame(mines: number) {
+    this.mines = mines;
+    this.state = "IN_PROGRESS";
+    this.generateField();
+    this.generateMines();
+  }
+
+  private generateField() {
     for (let x = 0; x < CELLS_COUNTS_X; x++) {
       for (let y = 0; y < CELLS_COUNTS_Y; y++) {
         this.setCell(x, y, new Cell(false));
       }
     }
-    this.generateMines();
   }
 
   private generateMines() {
-    for (let i = 0; i < MINES_NUMBER; i++) {
+    for (let i = 0; i < this.mines; i++) {
       const x = random(0, CELLS_COUNTS_X);
       const y = random(0, CELLS_COUNTS_Y);
       const cell = this.getCell(x, y);
@@ -79,7 +92,7 @@ export class GameModel {
         if (cell.opened) opened++;
       }
     }
-    return CELLS_COUNTS_X * CELLS_COUNTS_Y - opened === MINES_NUMBER;
+    return CELLS_COUNTS_X * CELLS_COUNTS_Y - opened === this.mines;
   }
 
   getFlagsNumber() {

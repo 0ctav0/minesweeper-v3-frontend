@@ -22,7 +22,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   background-color: lightgray;
   height: 100vh;
 }
@@ -35,6 +34,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 }
 
 .element {
@@ -49,8 +49,18 @@ body {
   background-size: 100% 100%;
 }
 
-.element span {
+#flags {
   font-size: 20px;
+}
+
+#mines-input {
+  font-size: 20px;
+  width: 55px;
+}
+
+#start-btn {
+  font-size: 16px;
+  padding: 4px;
 }
 
 #game-panel {

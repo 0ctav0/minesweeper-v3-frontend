@@ -1,6 +1,7 @@
 import {
   drawCanvas,
   getCellNumberByOffset,
+  getMinesFromInput,
   initCanvas,
   initContext,
   initInformationPanel,
@@ -17,7 +18,7 @@ import { GameModel } from "./model";
 import { sounds } from "./resources";
 
 /**
- * Used to interact with user and change the model
+ * Used to interact with user and change the model. Makes View and Model to work together
  */
 export class GameController {
   canvas: HTMLCanvasElement;
@@ -36,12 +37,25 @@ export class GameController {
 
     initCanvas(canvas);
     initContext(ctx);
-    initInformationPanel();
+    initInformationPanel(model.mines);
+    this.initHandlers();
 
+    const startBtn = document.querySelector("#start-btn");
+    if (!startBtn || !(startBtn instanceof HTMLButtonElement))
+      throw new Error("Start button is not found");
+
+    startBtn.onclick = () => {
+      const mines = getMinesFromInput();
+      this.initHandlers();
+      this.model.newGame(mines);
+    };
+  }
+
+  private initHandlers() {
     // disable context menu
-    canvas.oncontextmenu = () => false;
+    this.canvas.oncontextmenu = () => false;
     // on hover show selected cell
-    canvas.onmousemove = (event) => {
+    this.canvas.onmousemove = (event) => {
       const offsetX = event.offsetX;
       const offsetY = event.offsetY;
       const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
@@ -50,19 +64,19 @@ export class GameController {
         this.selectedCell = { x, y };
     };
     // on click
-    canvas.onmousedown = (event) => {
+    this.canvas.onmousedown = (event) => {
       const offsetX = event.offsetX;
       const offsetY = event.offsetY;
       const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
       const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
       switch (event.button) {
         case 0: //left mouse click
-          model.openAt(x, y);
+          this.model.openAt(x, y);
           break;
         case 2: //right click
-          model.flagAt(x, y);
-          const flags = model.getFlagsNumber();
-          writeMinesText(flags);
+          this.model.flagAt(x, y);
+          const flags = this.model.getFlagsNumber();
+          writeMinesText(flags, this.model.mines);
           break;
       }
     };

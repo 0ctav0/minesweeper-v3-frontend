@@ -7,7 +7,6 @@ import {
   COLOR_NUMBERS,
   FLAG_SIZES_X,
   FLAG_SIZES_Y,
-  MINES_NUMBER,
   NUMBER_FONT,
   NUMBER_X_OFFSET,
   NUMBER_Y_OFFSET,
@@ -118,14 +117,25 @@ export function initCanvas(canvas: HTMLCanvasElement) {
   canvas.height = CELLS_COUNTS_Y * CELL_SIZES_Y;
 }
 
-export function initInformationPanel() {
+export function initInformationPanel(mines: number) {
   const panel = document.querySelector("#information-panel");
   if (!panel) throw new Error("information panel is not found");
-  writeMinesText(0);
+  writeMinesText(0, mines);
 }
 
-export function writeMinesText(flags: number) {
-  const minesText = document.querySelector("#mines");
-  if (!minesText) throw new Error("mines text is not found");
-  minesText.textContent = `${flags} / ` + String(MINES_NUMBER);
+export function writeMinesText(flags: number, mines: number) {
+  const flagsText = document.querySelector("#flags");
+  const minesInput = document.querySelector("#mines-input");
+  if (!flagsText) throw new Error("flag text is not found");
+  if (!minesInput || !(minesInput instanceof HTMLInputElement))
+    throw new Error("mines input is not found");
+  flagsText.textContent = `${flags} / `;
+  minesInput.value = String(mines);
+}
+
+export function getMinesFromInput() {
+  const minesInput = document.querySelector("#mines-input");
+  if (!minesInput || !(minesInput instanceof HTMLInputElement))
+    throw new Error("mines input is not found");
+  return parseInt(minesInput.value, 10);
 }
