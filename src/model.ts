@@ -182,8 +182,8 @@ export class GameModel {
   }
 
   flagAt(x: number, y: number) {
-    if (this.state !== "IN_PROGRESS") return;
     const cell = this.getCell(x, y);
+    if (this.state !== "IN_PROGRESS" || cell.opened) return;
     cell.flagged = !cell.flagged;
   }
 }
