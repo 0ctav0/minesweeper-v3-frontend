@@ -66,6 +66,29 @@ export class GameModel {
     this.cells[String(x) + "," + String(y)] = cell;
   }
 
+  openAround(startX: number, startY: number) {
+    const startingCell = this.getCell(startX, startY);
+    if (this.state !== "IN_PROGRESS" || !startingCell.opened) return;
+    const nearbyMines = this.getNearbyMines(startX, startY);
+    const nearbyFlags = this.getNearbyFlags(startX, startY);
+    if (nearbyMines !== nearbyFlags) return;
+    for (
+      let x = Math.max(0, startX - 1);
+      x <= Math.min(startX + 1, CELLS_COUNTS_X - 1);
+      x++
+    ) {
+      for (
+        let y = Math.max(0, startY - 1);
+        y <= Math.min(startY + 1, CELLS_COUNTS_Y - 1);
+        y++
+      ) {
+        const cell = this.getCell(x, y);
+        if (cell.opened) continue; // do not check already opened cell
+        this.openAt(x, y);
+      }
+    }
+  }
+
   openAt(x: number, y: number) {
     const cell = this.getCell(x, y);
     if (this.state !== "IN_PROGRESS" || cell.opened) return;
@@ -131,8 +154,8 @@ export class GameModel {
     }
   }
 
-  private getNearbyMines(startX: number, startY: number) {
-    let nearbyMines = 0;
+  private getNearbySomething(startX: number, startY: number, key: keyof Cell) {
+    let nearbySomething = 0;
     for (
       let x = Math.max(0, startX - 1);
       x <= Math.min(startX + 1, CELLS_COUNTS_X - 1);
@@ -144,10 +167,18 @@ export class GameModel {
         y++
       ) {
         const cell = this.getCell(x, y);
-        if (cell.mined) nearbyMines++;
+        if (cell[key]) nearbySomething++;
       }
     }
-    return nearbyMines;
+    return nearbySomething;
+  }
+
+  private getNearbyMines(startX: number, startY: number) {
+    return this.getNearbySomething(startX, startY, "mined");
+  }
+
+  private getNearbyFlags(startX: number, startY: number) {
+    return this.getNearbySomething(startX, startY, "flagged");
   }
 
   flagAt(x: number, y: number) {

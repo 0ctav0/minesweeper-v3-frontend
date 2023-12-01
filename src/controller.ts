@@ -52,34 +52,41 @@ export class GameController {
     };
   }
 
+  private getCellNumberByMouse(event: MouseEvent) {
+    const offsetX = event.offsetX;
+    const offsetY = event.offsetY;
+    const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
+    const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
+    return { x, y };
+  }
+
   private initHandlers() {
     // disable context menu
     this.canvas.oncontextmenu = () => false;
     // on hover show selected cell
     this.canvas.onmousemove = (event) => {
-      const offsetX = event.offsetX;
-      const offsetY = event.offsetY;
-      const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
-      const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
+      const { x, y } = this.getCellNumberByMouse(event);
       if (x >= 0 && x < CELLS_COUNTS_X && y >= 0 && y < CELLS_COUNTS_Y)
         this.selectedCell = { x, y };
     };
     // on click
     this.canvas.onmousedown = (event) => {
-      const offsetX = event.offsetX;
-      const offsetY = event.offsetY;
-      const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
-      const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
+      const { x, y } = this.getCellNumberByMouse(event);
       switch (event.button) {
-        case 0: //left mouse click
-          this.model.openAt(x, y);
-          break;
         case 2: //right click
           this.model.flagAt(x, y);
           const flags = this.model.getFlagsNumber();
           writeMinesText(flags, this.model.mines);
           break;
       }
+    };
+    this.canvas.onclick = (event) => {
+      const { x, y } = this.getCellNumberByMouse(event);
+      this.model.openAt(x, y);
+    };
+    this.canvas.ondblclick = (event) => {
+      const { x, y } = this.getCellNumberByMouse(event);
+      this.model.openAround(x, y);
     };
   }
 
