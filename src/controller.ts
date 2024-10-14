@@ -83,9 +83,6 @@ export class GameController {
     this.canvas.onclick = (event) => {
       const { x, y } = this.getCellNumberByMouse(event);
       this.model.openAt(x, y);
-    };
-    this.canvas.ondblclick = (event) => {
-      const { x, y } = this.getCellNumberByMouse(event);
       this.model.openAround(x, y);
     };
   }

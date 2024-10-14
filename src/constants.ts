@@ -3,7 +3,7 @@ export const FPS = 1000 / 24;
 export const CELL_SIZES_X = 30;
 export const CELL_SIZES_Y = 30;
 
-export const CELLS_COUNTS_X = 8;
+export const CELLS_COUNTS_X = 12;
 export const CELLS_COUNTS_Y = 12;
 
 export const FLAG_SIZES_X = 20;

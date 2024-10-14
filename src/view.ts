@@ -24,6 +24,9 @@ export function renderSelectedCell(controller: GameController) {
   }
 }
 
+/**
+ * Called each frame, in game loop
+ */
 export function drawCanvas(ctx: CanvasRenderingContext2D, model: GameModel) {
   for (let x = 0; x < CELLS_COUNTS_X; x++) {
     for (let y = 0; y < CELLS_COUNTS_Y; y++) {
@@ -99,8 +102,8 @@ export function drawImageAt(
   ctx.drawImage(
     image,
     x * CELL_SIZES_X +
-      // if size defined then add padding to put at middle
-      (sizeX ? (CELL_SIZES_X - sizeX) / 2 : 0),
+    // if size defined then add padding to put at middle
+    (sizeX ? (CELL_SIZES_X - sizeX) / 2 : 0),
     y * CELL_SIZES_Y + (sizeY ? (CELL_SIZES_Y - sizeY) / 2 : 0),
     sizeX ? sizeX : CELL_SIZES_X,
     sizeY ? sizeY : CELL_SIZES_Y
