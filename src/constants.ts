@@ -3,8 +3,10 @@ export const FPS = 1000 / 24;
 export const CELL_WIDTH = 30;
 export const CELL_HEIGHT = 30;
 
+const TOP_PANEL_HEIGHT = 40;
+
 export const CELLS_X = Math.floor(window.innerWidth / CELL_WIDTH);
-export const CELLS_Y = Math.floor(window.innerHeight / CELL_HEIGHT);
+export const CELLS_Y = Math.floor((window.innerHeight - TOP_PANEL_HEIGHT) / CELL_HEIGHT);
 
 export const FLAG_SIZES_X = 20;
 export const FLAG_SIZES_Y = 20;

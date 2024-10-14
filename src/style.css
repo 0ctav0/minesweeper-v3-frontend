@@ -62,7 +62,3 @@ body {
   font-size: 16px;
   padding: 4px;
 }
-
-#game-panel {
-  overflow: auto;
-}
