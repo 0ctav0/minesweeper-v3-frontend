@@ -1,23 +1,24 @@
 import { CELL_SIZES_X, CELL_SIZES_Y } from "./constants";
 
+const pathname = window.location.pathname;
+
 export const images = {
   cell: new Image(CELL_SIZES_X, CELL_SIZES_Y),
   selectedCell: new Image(CELL_SIZES_X, CELL_SIZES_Y),
   flag: new Image(CELL_SIZES_X, CELL_SIZES_Y),
   mine: new Image(CELL_SIZES_X, CELL_SIZES_Y),
 };
-const href = window.location.href;
-images.cell.src = `${href}/img/cell.svg`;
-images.selectedCell.src = `${href}/img/selected-cell.svg`;
-images.flag.src = `${href}/img/flag.svg`;
-images.mine.src = `${href}/img/mine.svg`;
+images.cell.src = `${pathname}/img/cell.svg`;
+images.selectedCell.src = `${pathname}/img/selected-cell.svg`;
+images.flag.src = `${pathname}/img/flag.svg`;
+images.mine.src = `${pathname}/img/mine.svg`;
 
 export type ImagesObject = typeof images;
 export type ImageKeys = keyof ImagesObject;
 
 export const sounds = {
-  death: new Audio(`${href}/sounds/pig-bomb.mp3`),
-  win: new Audio(`${href}/sounds/win.wav`),
+  death: new Audio(`${pathname}/sounds/pig-bomb.mp3`),
+  win: new Audio(`${pathname}/sounds/win.wav`),
 };
 
 export type SoundsObject = typeof sounds;
