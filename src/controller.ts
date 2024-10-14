@@ -9,10 +9,10 @@ import {
   writeMinesText,
 } from "./view";
 import {
-  CELLS_COUNTS_X,
-  CELLS_COUNTS_Y,
-  CELL_SIZES_X,
-  CELL_SIZES_Y,
+  CELLS_X,
+  CELLS_Y,
+  CELL_WIDTH,
+  CELL_HEIGHT,
   FPS,
 } from "./constants";
 import { GameModel } from "./model";
@@ -55,8 +55,8 @@ export class GameController {
   private getCellNumberByMouse(event: MouseEvent) {
     const offsetX = event.offsetX;
     const offsetY = event.offsetY;
-    const x = getCellNumberByOffset(offsetX, CELL_SIZES_X);
-    const y = getCellNumberByOffset(offsetY, CELL_SIZES_Y);
+    const x = getCellNumberByOffset(offsetX, CELL_WIDTH);
+    const y = getCellNumberByOffset(offsetY, CELL_HEIGHT);
     return { x, y };
   }
 
@@ -66,7 +66,7 @@ export class GameController {
     // on hover show selected cell
     this.canvas.onmousemove = (event) => {
       const { x, y } = this.getCellNumberByMouse(event);
-      if (x >= 0 && x < CELLS_COUNTS_X && y >= 0 && y < CELLS_COUNTS_Y)
+      if (x >= 0 && x < CELLS_X && y >= 0 && y < CELLS_Y)
         this.selectedCell = { x, y };
     };
     // on click

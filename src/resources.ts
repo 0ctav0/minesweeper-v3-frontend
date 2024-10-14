@@ -1,12 +1,12 @@
-import { CELL_SIZES_X, CELL_SIZES_Y } from "./constants";
+import { CELL_WIDTH, CELL_HEIGHT } from "./constants";
 
 const pathname = window.location.pathname;
 
 export const images = {
-  cell: new Image(CELL_SIZES_X, CELL_SIZES_Y),
-  selectedCell: new Image(CELL_SIZES_X, CELL_SIZES_Y),
-  flag: new Image(CELL_SIZES_X, CELL_SIZES_Y),
-  mine: new Image(CELL_SIZES_X, CELL_SIZES_Y),
+  cell: new Image(CELL_WIDTH, CELL_HEIGHT),
+  selectedCell: new Image(CELL_WIDTH, CELL_HEIGHT),
+  flag: new Image(CELL_WIDTH, CELL_HEIGHT),
+  mine: new Image(CELL_WIDTH, CELL_HEIGHT),
 };
 images.cell.src = `${pathname}/img/cell.svg`;
 images.selectedCell.src = `${pathname}/img/selected-cell.svg`;

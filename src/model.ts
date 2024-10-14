@@ -1,4 +1,4 @@
-import { CELLS_COUNTS_X, CELLS_COUNTS_Y } from "./constants";
+import { CELLS_X, CELLS_Y } from "./constants";
 import { random } from "./helpers";
 
 type GameState = "IN_PROGRESS" | "PAUSE" | "FAILURE" | "WIN";
@@ -38,8 +38,8 @@ export class GameModel {
   }
 
   private generateField() {
-    for (let x = 0; x < CELLS_COUNTS_X; x++) {
-      for (let y = 0; y < CELLS_COUNTS_Y; y++) {
+    for (let x = 0; x < CELLS_X; x++) {
+      for (let y = 0; y < CELLS_Y; y++) {
         this.setCell(x, y, new Cell(false));
       }
     }
@@ -47,8 +47,8 @@ export class GameModel {
 
   private generateMines() {
     for (let i = 0; i < this.mines; i++) {
-      const x = random(0, CELLS_COUNTS_X);
-      const y = random(0, CELLS_COUNTS_Y);
+      const x = random(0, CELLS_X);
+      const y = random(0, CELLS_Y);
       const cell = this.getCell(x, y);
       if (cell && cell.mined) {
         i--;
@@ -74,12 +74,12 @@ export class GameModel {
     if (nearbyMines !== nearbyFlags) return;
     for (
       let x = Math.max(0, startX - 1);
-      x <= Math.min(startX + 1, CELLS_COUNTS_X - 1);
+      x <= Math.min(startX + 1, CELLS_X - 1);
       x++
     ) {
       for (
         let y = Math.max(0, startY - 1);
-        y <= Math.min(startY + 1, CELLS_COUNTS_Y - 1);
+        y <= Math.min(startY + 1, CELLS_Y - 1);
         y++
       ) {
         const cell = this.getCell(x, y);
@@ -109,19 +109,19 @@ export class GameModel {
 
   private isWin() {
     let opened = 0;
-    for (let x = 0; x < CELLS_COUNTS_X; x++) {
-      for (let y = 0; y < CELLS_COUNTS_Y; y++) {
+    for (let x = 0; x < CELLS_X; x++) {
+      for (let y = 0; y < CELLS_Y; y++) {
         const cell = this.getCell(x, y);
         if (cell.opened) opened++;
       }
     }
-    return CELLS_COUNTS_X * CELLS_COUNTS_Y - opened === this.mines;
+    return CELLS_X * CELLS_Y - opened === this.mines;
   }
 
   getFlagsNumber() {
     let flags = 0;
-    for (let x = 0; x < CELLS_COUNTS_X; x++) {
-      for (let y = 0; y < CELLS_COUNTS_Y; y++) {
+    for (let x = 0; x < CELLS_X; x++) {
+      for (let y = 0; y < CELLS_Y; y++) {
         const cell = this.getCell(x, y);
         if (cell.flagged) flags++;
       }
@@ -139,12 +139,12 @@ export class GameModel {
     }
     for (
       let x = Math.max(0, startX - 1);
-      x <= Math.min(startX + 1, CELLS_COUNTS_X - 1);
+      x <= Math.min(startX + 1, CELLS_X - 1);
       x++
     ) {
       for (
         let y = Math.max(0, startY - 1);
-        y <= Math.min(startY + 1, CELLS_COUNTS_Y - 1);
+        y <= Math.min(startY + 1, CELLS_Y - 1);
         y++
       ) {
         const cell = this.getCell(x, y);
@@ -158,12 +158,12 @@ export class GameModel {
     let nearbySomething = 0;
     for (
       let x = Math.max(0, startX - 1);
-      x <= Math.min(startX + 1, CELLS_COUNTS_X - 1);
+      x <= Math.min(startX + 1, CELLS_X - 1);
       x++
     ) {
       for (
         let y = Math.max(0, startY - 1);
-        y <= Math.min(startY + 1, CELLS_COUNTS_Y - 1);
+        y <= Math.min(startY + 1, CELLS_Y - 1);
         y++
       ) {
         const cell = this.getCell(x, y);
