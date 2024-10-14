@@ -1,25 +1,28 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="img/mine.svg" sizes="any" type="image/svg+xml" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Minesweeper</title>
-  </head>
-  <body>
-    <div id="information-panel">
-      <div class="element">
-        <div class="img"></div>
-        <span id="flags"></span>
-        <input id="mines-input" type="number" />
-      </div>
-      <div class="element">
-        <button id="start-btn">Start</button>
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="img/mine.svg" sizes="any" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minesweeper1</title>
+</head>
+
+<body>
+  <div id="information-panel">
+    <div class="element">
+      <div class="img"></div>
+      <span id="flags"></span>
+      <input id="mines-input" type="number" />
     </div>
-    <div id="game-panel">
-      <canvas id="game">Your browser doesn't support canvas tag element</canvas>
+    <div class="element">
+      <button id="start-btn">Start</button>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+  </div>
+  <div id="game-panel">
+    <canvas id="game">Your browser doesn't support canvas tag element</canvas>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
