@@ -17,6 +17,8 @@ import {
 } from "./constants";
 import { GameModel } from "./model";
 import { sounds } from "./resources";
+import { SoundSystem } from "./sound-system";
+
 
 /**
  * Used to interact with user and change the model. Makes View and Model to work together
@@ -26,6 +28,7 @@ export class GameController {
   ctx: CanvasRenderingContext2D;
   selectedCell?: { x: number; y: number };
   model: GameModel;
+  soundSystem: SoundSystem;
 
   constructor(canvas: HTMLCanvasElement, model: GameModel) {
     this.canvas = canvas;
@@ -33,17 +36,18 @@ export class GameController {
     if (!ctx) throw new Error("canvas's 2d context is null");
     this.ctx = ctx;
     this.model = model;
+    this.soundSystem = new SoundSystem();
 
     initCanvas(canvas);
     initContext(ctx);
     initInformationPanel(model.mines);
     this.initHandlers();
     this.gameLoop();
+    this.initStartBtn();
+  }
 
-    const startBtn = document.querySelector("#start-btn");
-    if (!startBtn || !(startBtn instanceof HTMLButtonElement))
-      throw new Error("Start button is not found");
-
+  private initStartBtn() {
+    const startBtn = document.querySelector("#start-btn") as HTMLElement;
     startBtn.onclick = () => {
       const mines = getMinesFromInput();
       this.initHandlers();
@@ -103,13 +107,11 @@ export class GameController {
       switch (event.type) {
         case "PLAY_DEATH":
           this.detachHandlers();
-          sounds.death.load();
-          sounds.death.play();
+          this.soundSystem.Play(sounds.death);
           break;
         case "WIN":
           this.detachHandlers();
-          sounds.win.load();
-          sounds.win.play();
+          this.soundSystem.Play(sounds.win);
           break;
       }
     }
