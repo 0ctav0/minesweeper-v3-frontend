@@ -121,8 +121,8 @@ export function initCanvas(canvas: HTMLCanvasElement) {
 }
 
 export function initInformationPanel(mines: number) {
-  const panel = document.querySelector("#information-panel");
-  if (!panel) throw new Error("information panel is not found");
+  const panel = document.querySelector("#info-panel");
+  if (!panel) throw new Error("info panel is not found");
   writeMinesText(0, mines);
 }
 

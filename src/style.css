@@ -32,13 +32,17 @@ body {
   display: flex;
 }
 
-#information-panel {
+#info-panel {
   height: 40px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+#info-panel *:first-child {
+  margin-left: auto;
 }
 
 .element {
@@ -65,6 +69,10 @@ body {
 #start-btn {
   font-size: 16px;
   padding: 4px;
+}
+
+#sound-box {
+  margin-left: auto;
 }
 
 #sound {

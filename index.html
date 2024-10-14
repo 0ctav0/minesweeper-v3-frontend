@@ -16,21 +16,23 @@
 </head>
 
 <body>
-  <div id="information-panel">
-    <div class="element">
-      <div class="img"></div>
-      <span id="flags"></span>
-      <input id="mines-input" type="number" />
+  <div>
+    <div id="info-panel">
+      <div class="element">
+        <div class="img"></div>
+        <span id="flags"></span>
+        <input id="mines-input" type="number" />
+      </div>
+      <div class="element">
+        <button id="start-btn">Start</button>
+      </div>
+      <div id="sound-box" class="element">
+        <button id="sound" class="no-btn"><img alt="Sound" src="img/sound.svg" width="24px" height="24px" /></button>
+      </div>
     </div>
-    <div class="element">
-      <button id="start-btn">Start</button>
+    <div id="game-panel">
+      <canvas id="game">Your browser doesn't support canvas tag element</canvas>
     </div>
-    <div class="element">
-      <button id="sound" class="no-btn"><img alt="Sound" src="img/sound.svg" width="24px" height="24px" /></button>
-    </div>
-  </div>
-  <div id="game-panel">
-    <canvas id="game">Your browser doesn't support canvas tag element</canvas>
   </div>
   <div id="error"></div>
   <script type="module" src="/src/main.ts"></script>
