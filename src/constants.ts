@@ -5,8 +5,11 @@ export const CELL_HEIGHT = 30;
 
 const TOP_PANEL_HEIGHT = 40;
 
-export const CELLS_X = Math.floor(window.innerWidth / CELL_WIDTH);
-export const CELLS_Y = Math.floor((window.innerHeight - TOP_PANEL_HEIGHT) / CELL_HEIGHT);
+const CELLS_X_MAX = 20;
+const CELLS_Y_MAX = 24;
+
+export const CELLS_X = Math.min(Math.floor(window.innerWidth / CELL_WIDTH), CELLS_X_MAX);
+export const CELLS_Y = Math.min(Math.floor((window.innerHeight - TOP_PANEL_HEIGHT) / CELL_HEIGHT), CELLS_Y_MAX);
 
 export const FLAG_SIZES_X = 20;
 export const FLAG_SIZES_Y = 20;
