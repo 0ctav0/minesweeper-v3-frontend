@@ -45,7 +45,7 @@ body {
 .element .img {
   width: 30px;
   height: 30px;
-  background-image: url(img/mine.svg);
+  background-image: url(/img/mine.svg);
   background-size: 100% 100%;
 }
 

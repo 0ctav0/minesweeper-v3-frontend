@@ -6,17 +6,18 @@ export const images = {
   flag: new Image(CELL_SIZES_X, CELL_SIZES_Y),
   mine: new Image(CELL_SIZES_X, CELL_SIZES_Y),
 };
-images.cell.src = "/img/cell.svg";
-images.selectedCell.src = "/img/selected-cell.svg";
-images.flag.src = "/img/flag.svg";
-images.mine.src = "/img/mine.svg";
+const href = window.location.href;
+images.cell.src = `${href}/img/cell.svg`;
+images.selectedCell.src = `${href}/img/selected-cell.svg`;
+images.flag.src = `${href}/img/flag.svg`;
+images.mine.src = `${href}/img/mine.svg`;
 
 export type ImagesObject = typeof images;
 export type ImageKeys = keyof ImagesObject;
 
 export const sounds = {
-  death: new Audio("/sounds/pig-bomb.mp3"),
-  win: new Audio("/sounds/win.wav"),
+  death: new Audio(`${href}/sounds/pig-bomb.mp3`),
+  win: new Audio(`${href}/sounds/win.wav`),
 };
 
 export type SoundsObject = typeof sounds;
