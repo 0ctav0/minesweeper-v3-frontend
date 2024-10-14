@@ -8,5 +8,5 @@ if (!(canvas instanceof HTMLCanvasElement))
   throw new Error("canvas is not a canvas");
 
 const model = new GameModel(DEFAULT_MINES_NUMBER);
-const controller = new GameController(canvas, model);
+new GameController(canvas, model);
 
