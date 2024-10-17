@@ -1,7 +1,6 @@
 import {
   drawCanvas,
   getCellNumberByOffset,
-  getMinesFromInput,
   initCanvas,
   initContext,
   initInformationPanel,
@@ -14,10 +13,13 @@ import {
   CELL_WIDTH,
   CELL_HEIGHT,
   FPS,
+  ID,
 } from "./constants";
 import { GameModel } from "./model";
 import { sounds } from "./resources";
 import { SoundSystem } from "./sound-system";
+import { MenuPopup } from "./menu-popup/menu-popup";
+import { getById } from "./helpers";
 
 
 /**
@@ -29,6 +31,7 @@ export class GameController {
   selectedCell?: { x: number; y: number };
   model: GameModel;
   soundSystem: SoundSystem;
+  menu: MenuPopup;
 
   constructor(canvas: HTMLCanvasElement, model: GameModel) {
     this.canvas = canvas;
@@ -37,22 +40,28 @@ export class GameController {
     this.ctx = ctx;
     this.model = model;
     this.soundSystem = new SoundSystem();
+    this.menu = new MenuPopup({
+      gameController: this,
+      onPlay: this.OnPlay
+    });
 
     initCanvas(canvas);
     initContext(ctx);
     initInformationPanel(model.mines);
     this.initHandlers();
     this.gameLoop();
-    this.initStartBtn();
+    this.InitOptionsBtn();
   }
 
-  private initStartBtn() {
-    const startBtn = document.querySelector("#start-btn") as HTMLElement;
-    startBtn.onclick = () => {
-      const mines = getMinesFromInput();
+  private OnPlay(_this: GameController, menu: MenuPopup) {
+    _this.model.newGame("medium");
+    menu.ToggleShow();
+  }
+
+  private InitOptionsBtn() {
+    getById(ID.optionsBtn).onclick = () => {
       this.initHandlers();
-      writeMinesText(0, mines);
-      this.model.newGame(mines);
+      this.menu.ToggleShow();
     };
   }
 
@@ -105,7 +114,7 @@ export class GameController {
     const event = this.model.eventQueue.pop();
     if (event) {
       switch (event.type) {
-        case "PLAY_DEATH":
+        case "DEFEAT":
           this.detachHandlers();
           this.soundSystem.Play(sounds.death);
           break;

@@ -128,12 +128,12 @@ export function initInformationPanel(mines: number) {
 
 export function writeMinesText(flags: number, mines: number) {
   const flagsText = document.querySelector("#flags");
-  const minesInput = document.querySelector("#mines-input");
+  // const minesInput = document.querySelector("#mines-input");
   if (!flagsText) throw new Error("flag text is not found");
-  if (!minesInput || !(minesInput instanceof HTMLInputElement))
-    throw new Error("mines input is not found");
-  flagsText.textContent = `${flags} / `;
-  minesInput.value = String(mines);
+  // if (!minesInput || !(minesInput instanceof HTMLInputElement))
+  // throw new Error("mines input is not found");
+  flagsText.textContent = `${mines - flags}`;
+  // minesInput.value = String(mines);
 }
 
 export function getMinesFromInput() {

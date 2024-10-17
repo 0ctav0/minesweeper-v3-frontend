@@ -1,8 +1,8 @@
-import { CELLS_X, CELLS_Y } from "./constants";
+import { CELLS_X, CELLS_Y, Difficulty, getMinesNumber } from "./constants";
 import { random } from "./helpers";
 
-type GameState = "IN_PROGRESS" | "PAUSE" | "FAILURE" | "WIN";
-type Event = { type: "PLAY_DEATH" | "WIN"; payload?: any };
+type GameState = "IN_PROGRESS" | "PAUSE" | "DEFEAT" | "WIN";
+type Event = { type: "DEFEAT" | "WIN"; payload?: any };
 
 export class Cell {
   mined: boolean;
@@ -17,22 +17,26 @@ export class Cell {
 
 /**
  * Contains all game's data and logic related to game mechanics
- */
+*/
 export class GameModel {
-  state: GameState = "IN_PROGRESS";
+  state: GameState;
+  difficulty: Difficulty;
   eventQueue: Event[] = [];
   mines: number;
   private cells: Record<string, Cell> = {};
 
-  constructor(mines: number) {
-    this.mines = mines;
+  constructor(difficulty: Difficulty) {
+    this.mines = getMinesNumber(difficulty);
+    this.state = "IN_PROGRESS";
+    this.difficulty = difficulty;
     this.generateField();
     this.generateMines();
   }
 
-  newGame(mines: number) {
-    this.mines = mines;
+  newGame(difficulty: Difficulty) {
+    this.mines = getMinesNumber(difficulty);
     this.state = "IN_PROGRESS";
+    this.difficulty = difficulty;
     this.generateField();
     this.generateMines();
   }
@@ -95,8 +99,8 @@ export class GameModel {
     if (!cell.flagged) {
       cell.opened = true;
       if (cell.mined) {
-        this.state = "FAILURE";
-        this.eventQueue.push({ type: "PLAY_DEATH" });
+        this.state = "DEFEAT";
+        this.eventQueue.push({ type: "DEFEAT" });
       } else {
         this.exploreMap(x, y);
         if (this.isWin()) {

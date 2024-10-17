@@ -16,6 +16,7 @@
   padding: 0;
   box-sizing: border-box;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
 body {
@@ -26,10 +27,28 @@ body {
   height: 100vh;
 }
 
-.no-btn {
-  padding: 0;
+.horiz {
+  display: flex;
+  gap: 1rem;
+}
+
+.icon-btn {
   margin: 0;
   display: flex;
+  padding: 4px;
+  border: 1px solid black;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+}
+
+.icon-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.disabled {
+  filter: opacity(0.3);
 }
 
 #info-panel {
@@ -66,19 +85,10 @@ body {
   width: 55px;
 }
 
-#start-btn {
-  font-size: 16px;
-  padding: 4px;
-}
-
 #sound-box {
   margin-left: auto;
 }
 
-#sound {
-  padding: 2px;
-  border: 1px solid black;
-  border-radius: 50%;
-  background: none;
-  cursor: pointer;
+#game-panel {
+  position: relative;
 }

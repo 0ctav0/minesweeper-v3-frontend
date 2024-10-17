@@ -1,3 +1,6 @@
+import { CLASS, ID } from "./constants";
+import { getById } from "./helpers";
+
 const soundEnabledKey = "soundEnabled";
 
 
@@ -6,21 +9,19 @@ export class SoundSystem {
 
     constructor() {
         this.soundEnabled = JSON.parse(localStorage.getItem(soundEnabledKey) ?? "false");
-        this.initSoundBtn();
+        this.InitSoundBtn();
     }
 
-    private initSoundBtn() {
-        const sound = document.querySelector("#sound") as HTMLElement;
-        sound.onclick = () => {
+    InitSoundBtn() {
+        getById(ID.soundBtn).onclick = () => {
             this.soundEnabled = !this.soundEnabled;
-            this.updateSoundBtn();
+            this.UpdateSoundBtn();
         }
-        this.updateSoundBtn();
+        this.UpdateSoundBtn();
     }
 
-    private updateSoundBtn() {
-        const sound = document.querySelector("#sound") as HTMLElement;
-        sound.style.filter = `opacity(${this.soundEnabled ? 1 : 0.3})`;
+    private UpdateSoundBtn() {
+        getById(ID.soundBtn).classList.toggle(CLASS.disabled, !this.soundEnabled);
         localStorage.setItem(soundEnabledKey, String(this.soundEnabled));
     }
 
