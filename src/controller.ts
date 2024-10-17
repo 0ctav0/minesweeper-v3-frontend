@@ -5,7 +5,7 @@ import {
   initContext,
   initInformationPanel,
   renderSelectedCell,
-  writeMinesText,
+  WriteMinesLeft,
 } from "./view";
 import {
   CELLS_X,
@@ -20,6 +20,7 @@ import { sounds } from "./resources";
 import { SoundSystem } from "./sound-system";
 import { MenuPopup } from "./menu-popup/menu-popup";
 import { getById } from "./helpers";
+import { Storage } from "./Storage";
 
 
 /**
@@ -53,9 +54,12 @@ export class GameController {
     this.InitOptionsBtn();
   }
 
-  private OnPlay(_this: GameController, menu: MenuPopup) {
-    _this.model.newGame("medium");
-    menu.ToggleShow();
+  private OnPlay = () => {
+    this.model.newGame(Storage.GetDifficulty());
+    this.EnableContextMenu(false);
+    this.menu.PreventMenuOpen();
+    WriteMinesLeft(this.model.getFlagsNumber(), this.model.mines);
+    this.menu.ToggleShow(false);
   }
 
   private InitOptionsBtn() {
@@ -75,7 +79,7 @@ export class GameController {
 
   private initHandlers() {
     // disable context menu
-    this.canvas.oncontextmenu = () => false;
+    this.EnableContextMenu(false);
     // on hover show selected cell
     this.canvas.onmousemove = (event) => {
       const { x, y } = this.getCellNumberByMouse(event);
@@ -89,7 +93,7 @@ export class GameController {
         case 2: //right click
           this.model.flagAt(x, y);
           const flags = this.model.getFlagsNumber();
-          writeMinesText(flags, this.model.mines);
+          WriteMinesLeft(flags, this.model.mines);
           break;
       }
     };
@@ -100,8 +104,8 @@ export class GameController {
     };
   }
 
-  private detachHandlers() {
-    this.canvas.oncontextmenu = () => true; // return back context menu
+  private EnableContextMenu(enable: boolean) {
+    this.canvas.oncontextmenu = () => enable;
   }
 
   private gameLoop = () => {
@@ -115,16 +119,27 @@ export class GameController {
     if (event) {
       switch (event.type) {
         case "DEFEAT":
-          this.detachHandlers();
-          this.soundSystem.Play(sounds.death);
+          this.OnDefeat();
           break;
         case "WIN":
-          this.detachHandlers();
-          this.soundSystem.Play(sounds.win);
+          this.OnWin();
           break;
       }
     }
   }
+
+  private OnDefeat() {
+    this.EnableContextMenu(true);
+    this.soundSystem.Play(sounds.death);
+    this.menu.RequestMenuOpen();
+  }
+
+  private OnWin() {
+    this.EnableContextMenu(true);
+    this.soundSystem.Play(sounds.win);
+    this.menu.RequestMenuOpen();
+  }
+
 
   private render() {
     drawCanvas(this.ctx, this.model);

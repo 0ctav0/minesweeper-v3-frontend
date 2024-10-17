@@ -1,14 +1,12 @@
 import { CLASS, ID } from "./constants";
 import { getById } from "./helpers";
-
-const soundEnabledKey = "soundEnabled";
-
+import { Storage } from "./Storage";
 
 export class SoundSystem {
     soundEnabled: boolean = false;
 
     constructor() {
-        this.soundEnabled = JSON.parse(localStorage.getItem(soundEnabledKey) ?? "false");
+        this.soundEnabled = Storage.GetSoundEnabled();
         this.InitSoundBtn();
     }
 
@@ -22,7 +20,7 @@ export class SoundSystem {
 
     private UpdateSoundBtn() {
         getById(ID.soundBtn).classList.toggle(CLASS.disabled, !this.soundEnabled);
-        localStorage.setItem(soundEnabledKey, String(this.soundEnabled));
+        Storage.SetSoundEnabled(this.soundEnabled);
     }
 
     Play(sound: HTMLAudioElement) {

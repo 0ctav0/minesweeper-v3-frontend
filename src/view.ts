@@ -123,10 +123,10 @@ export function initCanvas(canvas: HTMLCanvasElement) {
 export function initInformationPanel(mines: number) {
   const panel = document.querySelector("#info-panel");
   if (!panel) throw new Error("info panel is not found");
-  writeMinesText(0, mines);
+  WriteMinesLeft(0, mines);
 }
 
-export function writeMinesText(flags: number, mines: number) {
+export function WriteMinesLeft(flags: number, mines: number) {
   const flagsText = document.querySelector("#flags");
   // const minesInput = document.querySelector("#mines-input");
   if (!flagsText) throw new Error("flag text is not found");

@@ -7,4 +7,6 @@ export function randomSlice() {
   return Math.random().toString().slice(2);
 }
 
-export const getById = (id: string) => document.querySelector(`#${id}`) as HTMLElement; 
+export const getById = (id: string) => document.querySelector(`#${id}`) as HTMLElement;
+
+export const getAllByName = (name: string) => document.querySelectorAll(`[name="${name}"]`) as NodeListOf<HTMLElement>;

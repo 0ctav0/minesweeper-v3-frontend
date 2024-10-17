@@ -30,6 +30,7 @@ body {
 .horiz {
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .icon-btn {
@@ -91,4 +92,9 @@ body {
 
 #game-panel {
   position: relative;
+}
+
+#play-btn {
+  margin-left: auto;
+  margin-right: auto;
 }

@@ -13,16 +13,16 @@ images.selectedCell.src = `${pathname}/img/selected-cell.svg`;
 images.flag.src = `${pathname}/img/flag.svg`;
 images.mine.src = `${pathname}/img/mine.svg`;
 
-export type ImagesObject = typeof images;
-export type ImageKeys = keyof ImagesObject;
+type ImagesObject = typeof images;
+type ImageKeys = keyof ImagesObject;
 
 export const sounds = {
   death: new Audio(`${pathname}/sounds/pig-bomb.mp3`),
   win: new Audio(`${pathname}/sounds/win.wav`),
 };
 
-export type SoundsObject = typeof sounds;
-export type SoundKeys = keyof SoundsObject;
+type SoundsObject = typeof sounds;
+type SoundKeys = keyof SoundsObject;
 
 // TODO not used
 export function onloadResources(

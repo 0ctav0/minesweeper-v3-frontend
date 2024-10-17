@@ -1,3 +1,5 @@
+import { Difficulty, GameState } from "./types";
+
 export const FPS = 1000 / 24;
 
 export const CELL_WIDTH = 30;
@@ -19,23 +21,29 @@ export const CLASS = {
   disabled: "disabled",
 }
 
-export const StatusText = {
-  defeat: "Defeat",
-  win: "Win"
+export const NAME = {
+  difficulty: "difficulty",
 }
 
-const TOP_PANEL_HEIGHT = 40;
+export const StatusText: Record<GameState, string> = {
+  DEFEAT: "Defeat",
+  IN_PROGRESS: "In progress",
+  PAUSE: "Pause",
+  WIN: "Win",
+}
+
+const OFFSET_X = 20;
+const OFFSET_Y = 40;
 
 const CELLS_X_MAX = 20;
 const CELLS_Y_MAX = 24;
 
-export const CELLS_X = Math.min(Math.floor(window.innerWidth / CELL_WIDTH), CELLS_X_MAX);
-export const CELLS_Y = Math.min(Math.floor((window.innerHeight - TOP_PANEL_HEIGHT) / CELL_HEIGHT), CELLS_Y_MAX);
+export const CELLS_X = Math.min(Math.floor((window.innerWidth - OFFSET_X) / CELL_WIDTH), CELLS_X_MAX);
+export const CELLS_Y = Math.min(Math.floor((window.innerHeight - OFFSET_Y) / CELL_HEIGHT), CELLS_Y_MAX);
 
 export const FLAG_SIZES_X = 20;
 export const FLAG_SIZES_Y = 20;
 
-export type Difficulty = "easy" | "medium" | "hard" | "impossible";
 export const DifficultyMines: Record<Difficulty, number> = {
   easy: 10,
   medium: 15,

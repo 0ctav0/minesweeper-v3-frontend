@@ -9,6 +9,14 @@
     padding: 1rem;
 }
 
+#status {
+    margin-left: auto;
+}
+
+#sound-btn {
+    margin-left: auto;
+}
+
 #grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -28,7 +36,7 @@
 .difficulty label {
     cursor: pointer;
     padding: 1rem;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     width: 100%;
 }

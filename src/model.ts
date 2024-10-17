@@ -1,8 +1,6 @@
-import { CELLS_X, CELLS_Y, Difficulty, getMinesNumber } from "./constants";
+import { CELLS_X, CELLS_Y, getMinesNumber } from "./constants";
 import { random } from "./helpers";
-
-type GameState = "IN_PROGRESS" | "PAUSE" | "DEFEAT" | "WIN";
-type Event = { type: "DEFEAT" | "WIN"; payload?: any };
+import { Event, GameState, Difficulty } from "./types";
 
 export class Cell {
   mined: boolean;
