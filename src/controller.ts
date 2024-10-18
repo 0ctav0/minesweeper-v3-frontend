@@ -50,9 +50,10 @@ export class GameController {
     initCanvas(canvas);
     initContext(ctx);
     initInformationPanel(this.model.mines);
-    this.initHandlers();
+    this.InitHandlers();
     this.gameLoop();
     this.InitOptionsBtn();
+    this.SetupTelegramEvents();
   }
 
   private OnPlay = () => {
@@ -65,7 +66,7 @@ export class GameController {
 
   private InitOptionsBtn() {
     getById(ID.optionsBtn).onclick = () => {
-      this.initHandlers();
+      this.InitHandlers();
       this.menu.ToggleShow();
     };
   }
@@ -78,7 +79,7 @@ export class GameController {
     return { x, y };
   }
 
-  private initHandlers() {
+  private InitHandlers() {
     // disable context menu
     this.EnableContextMenu(false);
     // on hover show selected cell
@@ -107,6 +108,16 @@ export class GameController {
     window.onbeforeunload = () => {
       GameState.Save(this.model);
     }
+  }
+
+  private OnPopupClosed() {
+    console.log("eee", this);
+    GameState.Save(this.model);
+  }
+
+  private SetupTelegramEvents() {
+    if (!Telegram) return;
+    Telegram.WebView.onEvent("popupClosed", this.OnPopupClosed);
   }
 
   private EnableContextMenu(enable: boolean) {
@@ -144,7 +155,6 @@ export class GameController {
     this.soundSystem.Play(sounds.win);
     this.menu.RequestMenuOpen();
   }
-
 
   private render() {
     drawCanvas(this.ctx, this.model);
