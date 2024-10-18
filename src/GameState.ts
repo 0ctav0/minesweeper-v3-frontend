@@ -48,7 +48,9 @@ export class GameState {
 
     static Load(): GameModel | null {
         try {
-            const binaryString = atob(Storage.GetItem(saveKey) ?? "");
+            const base64 = Storage.GetItem(saveKey);
+            if (!base64) throw new Error("No savegame")
+            const binaryString = atob(base64);
             const view = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) {
                 view[i] = binaryString.charCodeAt(i);

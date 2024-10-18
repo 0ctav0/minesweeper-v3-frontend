@@ -11,4 +11,6 @@ export const range = (start: number, end: number) => [...Array(end - start).keys
 
 export const getById = (id: string) => document.querySelector(`#${id}`) as HTMLElement;
 
+export const getByName = (name: string) => document.querySelector(`[name="${name}"]`) as HTMLElement;
+
 export const getAllByName = (name: string) => document.querySelectorAll(`[name="${name}"]`) as NodeListOf<HTMLElement>;

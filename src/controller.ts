@@ -20,7 +20,6 @@ import { sounds } from "./resources";
 import { SoundSystem } from "./sound-system";
 import { MenuPopup } from "./menu-popup/menu-popup";
 import { getById } from "./helpers";
-import { Storage } from "./Storage";
 import { EventType, GameStatus } from "./types";
 import { GameState } from "./GameState";
 
@@ -41,7 +40,7 @@ export class GameController {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("canvas's 2d context is null");
     this.ctx = ctx;
-    this.model = GameState.Load() ?? GameModel.Create(Storage.GetDifficulty());
+    this.model = GameState.Load() ?? GameModel.Create();
     this.soundSystem = new SoundSystem();
     this.menu = new MenuPopup({
       gameController: this,
@@ -57,7 +56,7 @@ export class GameController {
   }
 
   private OnPlay = () => {
-    this.model.NewGame(Storage.GetDifficulty());
+    this.model.NewGame(MenuPopup.GetDifficultyFromInput());
     this.EnableContextMenu(false);
     this.menu.PreventMenuOpen();
     WriteMinesLeft(this.model.getFlagsNumber(), this.model.mines);

@@ -65,8 +65,8 @@ export class GameModel {
     this.gameField = gameField ?? GameField.Create();
   }
 
-  static Create(difficulty: Difficulty) {
-    return new GameModel(GameStatus.START, difficulty, [], getMinesNumber(difficulty));
+  static Create() {
+    return new GameModel(GameStatus.START, Difficulty.MEDIUM, [], getMinesNumber(Difficulty.MEDIUM));
   }
 
   NewGame(difficulty: Difficulty) {

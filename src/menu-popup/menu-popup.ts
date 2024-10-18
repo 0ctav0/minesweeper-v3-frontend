@@ -1,8 +1,7 @@
-import { CLASS, DifficultyInputID, ID, NAME, StatusText } from "../constants";
+import { CLASS, DifficultyInputID, ID, StatusText } from "../constants";
 import { GameController } from "../controller";
-import { getById, getAllByName } from "../helpers";
+import { getById } from "../helpers";
 import { Difficulty, GameStatus } from "../types";
-import { Storage } from "../Storage";
 import "./menu-popup.css"
 
 const POPUP_DELAY = 2000;
@@ -15,9 +14,18 @@ export class MenuPopup {
 
     constructor(param: Param) {
         this.controller = param.gameController;
-        this.SetDifficultyInput(param.gameController.model.difficulty);
-        this.InitOnClickDifficulty();
+        this.SetDifficultyInput(this.controller.model.difficulty);
         getById(ID.playBtn).onclick = param.onPlay;
+    }
+
+    private static ParseDifficulty(text: string): Difficulty {
+        const entry = Object.entries(DifficultyInputID).find(([, inputID]) => inputID === text)
+        return entry ? Number(entry[0]) as Difficulty : Difficulty.MEDIUM;
+    }
+
+    static GetDifficultyFromInput(): Difficulty {
+        const radio = document.querySelector(`.difficulty input:checked`) as HTMLInputElement;
+        return MenuPopup.ParseDifficulty(radio.id);
     }
 
     SetDifficultyInput(difficulty: Difficulty) {
@@ -30,13 +38,6 @@ export class MenuPopup {
         getById(ID.menuPopup).style.display = this.show ? "flex" : "none";
         this.SetStatus(this.controller.model.status);
         getById(ID.optionsBtn).classList.toggle(CLASS.disabled, this.show);
-    }
-
-    private InitOnClickDifficulty() {
-        getAllByName(NAME.difficulty).forEach((el) => el.onclick = (e) => {
-            const radio = e.target as HTMLInputElement;
-            Storage.SetDifficulty(radio.id);
-        })
     }
 
     SetStatus(state: GameStatus) {

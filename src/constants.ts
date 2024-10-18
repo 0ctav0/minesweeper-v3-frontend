@@ -14,17 +14,14 @@ export const ID = {
 }
 
 export const DifficultyInputID: Record<Difficulty, string> = {
-  [Difficulty.easy]: "easy",
-  [Difficulty.medium]: "medium",
-  [Difficulty.hard]: "hard",
-  [Difficulty.impossible]: "impossible",
+  [Difficulty.EASY]: "easy",
+  [Difficulty.MEDIUM]: "medium",
+  [Difficulty.HARD]: "hard",
+  [Difficulty.IMPOSSIBLE]: "impossible",
 }
 
 export const CLASS = {
   disabled: "disabled",
-}
-
-export const NAME = {
   difficulty: "difficulty",
 }
 
@@ -49,10 +46,10 @@ export const FLAG_SIZES_X = 20;
 export const FLAG_SIZES_Y = 20;
 
 export const DifficultyMines: Record<Difficulty, number> = {
-  [Difficulty.easy]: 10,
-  [Difficulty.medium]: 15,
-  [Difficulty.hard]: 20,
-  [Difficulty.impossible]: 25,
+  [Difficulty.EASY]: 10,
+  [Difficulty.MEDIUM]: 15,
+  [Difficulty.HARD]: 20,
+  [Difficulty.IMPOSSIBLE]: 25,
 }
 
 export enum DifficultyValues {
