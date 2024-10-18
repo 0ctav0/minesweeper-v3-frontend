@@ -110,14 +110,18 @@ export class GameController {
     }
   }
 
-  private OnPopupClosed() {
-    console.log("eee", this);
+  private OnPopupClosed(e: any, d: any) {
+    console.log("eee", this, e, d);
     GameState.Save(this.model);
   }
 
   private SetupTelegramEvents() {
     if (!Telegram) return;
     Telegram.WebView.onEvent("popupClosed", this.OnPopupClosed);
+    Telegram.WebApp.onEvent("popupClosed", this.OnPopupClosed);
+    Telegram.WebApp.BackButton.onClick = this.OnPopupClosed;
+    Telegram.WebApp.MainButton.onClick = this.OnPopupClosed;
+    Telegram.WebApp.SecondaryButton.onClick = this.OnPopupClosed;
   }
 
   private EnableContextMenu(enable: boolean) {
