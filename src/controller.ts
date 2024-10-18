@@ -53,7 +53,6 @@ export class GameController {
     this.InitHandlers();
     this.gameLoop();
     this.InitOptionsBtn();
-    this.SetupTelegramEvents();
   }
 
   private OnPlay = () => {
@@ -107,24 +106,9 @@ export class GameController {
     // on save
     document.onvisibilitychange = () => {
       if (document.hidden) {
-        console.log("save the game");
         GameState.Save(this.model);
       }
     }
-  }
-
-  private OnPopupClosed(e: any, d: any) {
-    console.log("eee", this, e, d);
-    GameState.Save(this.model);
-  }
-
-  private SetupTelegramEvents() {
-    if (!Telegram) return;
-    Telegram.WebView.onEvent("popup_closed", this.OnPopupClosed);
-    Telegram.WebApp.onEvent("popup_closed", this.OnPopupClosed);
-    Telegram.WebApp.BackButton.onClick = this.OnPopupClosed;
-    Telegram.WebApp.MainButton.onClick = this.OnPopupClosed;
-    Telegram.WebApp.SecondaryButton.onClick = this.OnPopupClosed;
   }
 
   private EnableContextMenu(enable: boolean) {

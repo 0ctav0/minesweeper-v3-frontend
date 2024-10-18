@@ -23,6 +23,7 @@ const saveKey = "save";
 
 export class GameState {
     static Save(model: GameModel) {
+        console.debug("saving the game...")
         const view = new Uint8Array(NEED_BYTES);
         let offset = 0;
         view[offset++] = model.status;
