@@ -26,6 +26,7 @@ export const NAME = {
 }
 
 export const StatusText: Record<GameState, string> = {
+  START: "Waiting to start",
   DEFEAT: "Defeat",
   IN_PROGRESS: "In progress",
   PAUSE: "Pause",

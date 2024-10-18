@@ -25,18 +25,16 @@ export class GameModel {
 
   constructor(difficulty: Difficulty) {
     this.mines = getMinesNumber(difficulty);
-    this.state = "IN_PROGRESS";
+    this.state = "START";
     this.difficulty = difficulty;
     this.generateField();
-    this.generateMines();
   }
 
   newGame(difficulty: Difficulty) {
     this.mines = getMinesNumber(difficulty);
-    this.state = "IN_PROGRESS";
+    this.state = "START";
     this.difficulty = difficulty;
     this.generateField();
-    this.generateMines();
   }
 
   private generateField() {
@@ -47,16 +45,38 @@ export class GameModel {
     }
   }
 
-  private generateMines() {
-    for (let i = 0; i < this.mines; i++) {
+  private GetBoundIterator(originX: number, originY: number, step: number = 1) {
+    const array = [];
+    const minX = Math.max(0, originX - step);
+    const minY = Math.max(0, originY - step);
+    const maxX = Math.min(originX + step, CELLS_X - 1);
+    const maxY = Math.min(originY + step, CELLS_Y - 1);
+    for (let x = minX; x <= maxX; x++) {
+      for (let y = minY; y <= maxY; y++) {
+        array.push({ x, y });
+      }
+    }
+    return array;
+  }
+
+  private IsInArea(originX: number, checkedX: number, originY: number, checkedY: number): boolean {
+    const SAFE_AREA = 1;
+    return this.GetBoundIterator(originX, originY, SAFE_AREA)
+      .some(({ x, y }) => x == checkedX && y == checkedY
+      )
+  }
+
+  private GenerateMines(originX: number, originY: number) {
+    let i = 0;
+    while (i < this.mines) {
       const x = random(0, CELLS_X);
       const y = random(0, CELLS_Y);
       const cell = this.getCell(x, y);
-      if (cell && cell.mined) {
-        i--;
-      } else {
-        this.setCell(x, y, new Cell(true));
+      if (cell.mined || this.IsInArea(originX, x, originY, y)) {
+        continue;
       }
+      cell.mined = true;
+      i++;
     }
   }
 
@@ -74,25 +94,20 @@ export class GameModel {
     const nearbyMines = this.getNearbyMines(startX, startY);
     const nearbyFlags = this.getNearbyFlags(startX, startY);
     if (nearbyMines !== nearbyFlags) return;
-    for (
-      let x = Math.max(0, startX - 1);
-      x <= Math.min(startX + 1, CELLS_X - 1);
-      x++
-    ) {
-      for (
-        let y = Math.max(0, startY - 1);
-        y <= Math.min(startY + 1, CELLS_Y - 1);
-        y++
-      ) {
-        const cell = this.getCell(x, y);
-        if (cell.opened) continue; // do not check already opened cell
-        this.openAt(x, y);
-      }
+    this.GetBoundIterator(startX, startY).map(({ x, y }) => {
+      const cell = this.getCell(x, y);
+      if (cell.opened) return; // do not check already opened cell
+      this.openAt(x, y);
     }
+    );
   }
 
   openAt(x: number, y: number) {
     const cell = this.getCell(x, y);
+    if (this.state == "START") {
+      this.GenerateMines(x, y);
+      this.state = "IN_PROGRESS";
+    }
     if (this.state !== "IN_PROGRESS" || cell.opened) return;
     if (!cell.flagged) {
       cell.opened = true;
@@ -139,39 +154,20 @@ export class GameModel {
       startingCell.nearbyMines = mines;
       return;
     }
-    for (
-      let x = Math.max(0, startX - 1);
-      x <= Math.min(startX + 1, CELLS_X - 1);
-      x++
-    ) {
-      for (
-        let y = Math.max(0, startY - 1);
-        y <= Math.min(startY + 1, CELLS_Y - 1);
-        y++
-      ) {
-        const cell = this.getCell(x, y);
-        if (cell.opened) continue; // do not check already opened cell
-        this.exploreMap(x, y);
-      }
-    }
+    this.GetBoundIterator(startX, startY).map(({ x, y }) => {
+      const cell = this.getCell(x, y);
+      if (cell.opened) return; // do not check already opened cell
+      this.exploreMap(x, y);
+    })
   }
 
   private getNearbySomething(startX: number, startY: number, key: keyof Cell) {
     let nearbySomething = 0;
-    for (
-      let x = Math.max(0, startX - 1);
-      x <= Math.min(startX + 1, CELLS_X - 1);
-      x++
-    ) {
-      for (
-        let y = Math.max(0, startY - 1);
-        y <= Math.min(startY + 1, CELLS_Y - 1);
-        y++
-      ) {
-        const cell = this.getCell(x, y);
-        if (cell[key]) nearbySomething++;
-      }
+    this.GetBoundIterator(startX, startY).map(({ x, y }) => {
+      const cell = this.getCell(x, y);
+      if (cell[key]) nearbySomething++;
     }
+    )
     return nearbySomething;
   }
 

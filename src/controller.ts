@@ -144,7 +144,7 @@ export class GameController {
   private render() {
     drawCanvas(this.ctx, this.model);
 
-    if (this.model.state !== "IN_PROGRESS") return;
+    if (this.model.state !== "IN_PROGRESS" && this.model.state !== "START") return;
 
     renderSelectedCell(this);
   }
