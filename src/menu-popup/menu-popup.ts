@@ -1,7 +1,7 @@
-import { CLASS, ID, NAME, StatusText } from "../constants";
+import { CLASS, DifficultyInputID, ID, NAME, StatusText } from "../constants";
 import { GameController } from "../controller";
 import { getById, getAllByName } from "../helpers";
-import { Difficulty, GameState } from "../types";
+import { Difficulty, GameStatus } from "../types";
 import { Storage } from "../Storage";
 import "./menu-popup.css"
 
@@ -18,21 +18,17 @@ export class MenuPopup {
         this.SetDifficultyInput(param.gameController.model.difficulty);
         this.InitOnClickDifficulty();
         getById(ID.playBtn).onclick = param.onPlay;
-        getById(ID.easyVal).innerText = String(0);
-        getById(ID.mediumVal).innerText = String(0);
-        getById(ID.hardVal).innerText = String(0);
-        getById(ID.impossibleVal).innerText = String(0);
     }
 
     SetDifficultyInput(difficulty: Difficulty) {
-        const radio = getById(difficulty) as HTMLInputElement;
+        const radio = getById(DifficultyInputID[difficulty]) as HTMLInputElement;
         radio.checked = true;
     }
 
     ToggleShow(force?: boolean) {
         this.show = force === undefined ? !this.show : force;
         getById(ID.menuPopup).style.display = this.show ? "flex" : "none";
-        this.SetStatus(this.controller.model.state);
+        this.SetStatus(this.controller.model.status);
         getById(ID.optionsBtn).classList.toggle(CLASS.disabled, this.show);
     }
 
@@ -43,7 +39,7 @@ export class MenuPopup {
         })
     }
 
-    SetStatus(state: GameState) {
+    SetStatus(state: GameStatus) {
         getById(ID.status).innerText = StatusText[state];
     }
 

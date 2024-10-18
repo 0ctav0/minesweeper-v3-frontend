@@ -1,4 +1,4 @@
-import { DifficultyMines } from "./constants";
+import { DifficultyInputID } from "./constants";
 import { Difficulty } from "./types";
 
 const difficultyKey = "difficulty";
@@ -23,17 +23,20 @@ export class Storage {
         Storage.SetItem(soundEnabledKey, String(soundEnabled))
     }
 
-    private static ParseDifficulty(raw: string): Difficulty {
-        const isCorrect = raw in DifficultyMines;
-        return isCorrect ? raw as Difficulty : "medium";
+    // to as: 0, 1, ...
+    private static ParseDifficulty(text: string): Difficulty {
+        const entry = Object.entries(DifficultyInputID).find(([, inputID]) => inputID === text)
+        return entry ? Number(entry[0]) as Difficulty : Difficulty.medium;
     }
 
+    // get as: 0, 1, ...
     static GetDifficulty(): Difficulty {
         const difficultyRaw = this.GetItem(difficultyKey) ?? ""
         return this.ParseDifficulty(difficultyRaw);
     }
 
-    static SetDifficulty(raw: string) {
-        this.SetItem(difficultyKey, this.ParseDifficulty(raw));
+    // comes as: easy, medium, ...
+    static SetDifficulty(text: string) {
+        this.SetItem(difficultyKey, text);
     }
 }

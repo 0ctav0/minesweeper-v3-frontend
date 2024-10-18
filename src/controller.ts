@@ -21,6 +21,8 @@ import { SoundSystem } from "./sound-system";
 import { MenuPopup } from "./menu-popup/menu-popup";
 import { getById } from "./helpers";
 import { Storage } from "./Storage";
+import { EventType, GameStatus } from "./types";
+import { GameState } from "./GameState";
 
 
 /**
@@ -34,12 +36,12 @@ export class GameController {
   soundSystem: SoundSystem;
   menu: MenuPopup;
 
-  constructor(canvas: HTMLCanvasElement, model: GameModel) {
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("canvas's 2d context is null");
     this.ctx = ctx;
-    this.model = model;
+    this.model = GameState.Load() ?? GameModel.Create(Storage.GetDifficulty());
     this.soundSystem = new SoundSystem();
     this.menu = new MenuPopup({
       gameController: this,
@@ -48,14 +50,14 @@ export class GameController {
 
     initCanvas(canvas);
     initContext(ctx);
-    initInformationPanel(model.mines);
+    initInformationPanel(this.model.mines);
     this.initHandlers();
     this.gameLoop();
     this.InitOptionsBtn();
   }
 
   private OnPlay = () => {
-    this.model.newGame(Storage.GetDifficulty());
+    this.model.NewGame(Storage.GetDifficulty());
     this.EnableContextMenu(false);
     this.menu.PreventMenuOpen();
     WriteMinesLeft(this.model.getFlagsNumber(), this.model.mines);
@@ -69,7 +71,7 @@ export class GameController {
     };
   }
 
-  private getCellNumberByMouse(event: MouseEvent) {
+  private GetCellNumberByMouse(event: MouseEvent) {
     const offsetX = event.offsetX;
     const offsetY = event.offsetY;
     const x = getCellNumberByOffset(offsetX, CELL_WIDTH);
@@ -82,26 +84,30 @@ export class GameController {
     this.EnableContextMenu(false);
     // on hover show selected cell
     this.canvas.onmousemove = (event) => {
-      const { x, y } = this.getCellNumberByMouse(event);
+      const { x, y } = this.GetCellNumberByMouse(event);
       if (x >= 0 && x < CELLS_X && y >= 0 && y < CELLS_Y)
         this.selectedCell = { x, y };
     };
     // on click
     this.canvas.onmousedown = (event) => {
-      const { x, y } = this.getCellNumberByMouse(event);
+      const { x, y } = this.GetCellNumberByMouse(event);
       switch (event.button) {
         case 2: //right click
-          this.model.flagAt(x, y);
+          this.model.FlagAt(x, y);
           const flags = this.model.getFlagsNumber();
           WriteMinesLeft(flags, this.model.mines);
           break;
       }
     };
     this.canvas.onclick = (event) => {
-      const { x, y } = this.getCellNumberByMouse(event);
-      this.model.openAt(x, y);
-      this.model.openAround(x, y);
+      const { x, y } = this.GetCellNumberByMouse(event);
+      this.model.OpenAt(x, y);
+      this.model.OpenAround(x, y);
     };
+    // on save
+    window.onbeforeunload = () => {
+      GameState.Save(this.model);
+    }
   }
 
   private EnableContextMenu(enable: boolean) {
@@ -118,10 +124,10 @@ export class GameController {
     const event = this.model.eventQueue.pop();
     if (event) {
       switch (event.type) {
-        case "DEFEAT":
+        case EventType.DEFEAT:
           this.OnDefeat();
           break;
-        case "WIN":
+        case EventType.WIN:
           this.OnWin();
           break;
       }
@@ -144,7 +150,7 @@ export class GameController {
   private render() {
     drawCanvas(this.ctx, this.model);
 
-    if (this.model.state !== "IN_PROGRESS" && this.model.state !== "START") return;
+    if (this.model.status !== GameStatus.IN_PROGRESS && this.model.status !== GameStatus.START) return;
 
     renderSelectedCell(this);
   }

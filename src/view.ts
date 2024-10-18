@@ -18,7 +18,7 @@ import { images } from "./resources";
 export function renderSelectedCell(controller: GameController) {
   const { ctx, selectedCell, model } = controller;
   if (!selectedCell) return;
-  const cell = model.getCell(selectedCell.x, selectedCell.y);
+  const cell = model.gameField.GetCell(selectedCell.x, selectedCell.y);
   if (!cell.opened && !cell.flagged) {
     drawImageAt(ctx, images.selectedCell, selectedCell.x, selectedCell.y);
   }
@@ -30,7 +30,7 @@ export function renderSelectedCell(controller: GameController) {
 export function drawCanvas(ctx: CanvasRenderingContext2D, model: GameModel) {
   for (let x = 0; x < CELLS_X; x++) {
     for (let y = 0; y < CELLS_Y; y++) {
-      const cell = model.getCell(x, y);
+      const cell = model.gameField.GetCell(x, y);
       if (cell.opened) {
         // open cell
         ctx.clearRect(

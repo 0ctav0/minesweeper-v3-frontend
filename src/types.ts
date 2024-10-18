@@ -1,4 +1,5 @@
-export type GameState = "START" | "IN_PROGRESS" | "PAUSE" | "DEFEAT" | "WIN";
-export type Event = { type: "DEFEAT" | "WIN"; payload?: any };
+export enum GameStatus { START, IN_PROGRESS, PAUSE, DEFEAT, WIN };
+export enum EventType { NONE, DEFEAT, WIN }
+export type Event = { type: EventType; payload?: any };
 
-export type Difficulty = "easy" | "medium" | "hard" | "impossible";
+export enum Difficulty { "easy", "medium", "hard", "impossible" };

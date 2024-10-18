@@ -1,48 +1,79 @@
 import { CELLS_X, CELLS_Y, getMinesNumber } from "./constants";
 import { random } from "./helpers";
-import { Event, GameState, Difficulty } from "./types";
+import { Event, GameStatus, Difficulty, EventType } from "./types";
 
 export class Cell {
   mined: boolean;
-  flagged = false;
-  opened = false;
-  nearbyMines = 0;
+  flagged: boolean;
+  opened: boolean;
+  nearbyMines: number;
 
-  constructor(mine: boolean) {
-    this.mined = mine;
+  constructor(mined: boolean, flagged: boolean, opened: boolean, nearbyMines: number) {
+    this.mined = mined;
+    this.flagged = flagged;
+    this.opened = opened;
+    this.nearbyMines = nearbyMines;
+  }
+
+  static Create() {
+    return new Cell(false, false, false, 0);
   }
 }
+
+export class GameField {
+  private cells: Record<string, Cell>;
+
+  constructor(cells: Record<string, Cell>) {
+    this.cells = cells;
+  }
+
+  static Create(): GameField {
+    const gameField = new GameField({});
+    for (let x = 0; x < CELLS_X; x++) {
+      for (let y = 0; y < CELLS_Y; y++) {
+        gameField.SetCell(x, y, Cell.Create());
+      }
+    }
+    return gameField;
+  }
+
+  GetCell(x: number, y: number) {
+    return this.cells[String(x) + "," + String(y)];
+  }
+
+  SetCell(x: number, y: number, cell: Cell) {
+    this.cells[String(x) + "," + String(y)] = cell;
+  }
+}
+
 
 /**
  * Contains all game's data and logic related to game mechanics
 */
 export class GameModel {
-  state: GameState;
+  status: GameStatus;
   difficulty: Difficulty;
   eventQueue: Event[] = [];
   mines: number;
-  private cells: Record<string, Cell> = {};
+  gameField: GameField;
 
-  constructor(difficulty: Difficulty) {
-    this.mines = getMinesNumber(difficulty);
-    this.state = "START";
+  constructor(status: GameStatus, difficulty: Difficulty, eventQueue: Event[], mines: number, gameField?: GameField) {
+    this.status = status;
     this.difficulty = difficulty;
-    this.generateField();
+    this.eventQueue = eventQueue;
+    this.mines = mines;
+    this.gameField = gameField ?? GameField.Create();
   }
 
-  newGame(difficulty: Difficulty) {
-    this.mines = getMinesNumber(difficulty);
-    this.state = "START";
-    this.difficulty = difficulty;
-    this.generateField();
+  static Create(difficulty: Difficulty) {
+    return new GameModel(GameStatus.START, difficulty, [], getMinesNumber(difficulty));
   }
 
-  private generateField() {
-    for (let x = 0; x < CELLS_X; x++) {
-      for (let y = 0; y < CELLS_Y; y++) {
-        this.setCell(x, y, new Cell(false));
-      }
-    }
+  NewGame(difficulty: Difficulty) {
+    this.mines = getMinesNumber(difficulty);
+    this.status = GameStatus.START;
+    this.difficulty = difficulty;
+    this.gameField = GameField.Create();
   }
 
   private GetBoundIterator(originX: number, originY: number, step: number = 1) {
@@ -71,7 +102,7 @@ export class GameModel {
     while (i < this.mines) {
       const x = random(0, CELLS_X);
       const y = random(0, CELLS_Y);
-      const cell = this.getCell(x, y);
+      const cell = this.gameField.GetCell(x, y);
       if (cell.mined || this.IsInArea(originX, x, originY, y)) {
         continue;
       }
@@ -80,45 +111,37 @@ export class GameModel {
     }
   }
 
-  getCell(x: number, y: number) {
-    return this.cells[String(x) + "," + String(y)];
-  }
-
-  setCell(x: number, y: number, cell: Cell) {
-    this.cells[String(x) + "," + String(y)] = cell;
-  }
-
-  openAround(startX: number, startY: number) {
-    const startingCell = this.getCell(startX, startY);
-    if (this.state !== "IN_PROGRESS" || !startingCell.opened) return;
+  OpenAround(startX: number, startY: number) {
+    const startingCell = this.gameField.GetCell(startX, startY);
+    if (this.status !== GameStatus.IN_PROGRESS || !startingCell.opened) return;
     const nearbyMines = this.getNearbyMines(startX, startY);
     const nearbyFlags = this.getNearbyFlags(startX, startY);
     if (nearbyMines !== nearbyFlags) return;
     this.GetBoundIterator(startX, startY).map(({ x, y }) => {
-      const cell = this.getCell(x, y);
+      const cell = this.gameField.GetCell(x, y);
       if (cell.opened) return; // do not check already opened cell
-      this.openAt(x, y);
+      this.OpenAt(x, y);
     }
     );
   }
 
-  openAt(x: number, y: number) {
-    const cell = this.getCell(x, y);
-    if (this.state == "START") {
+  OpenAt(x: number, y: number) {
+    const cell = this.gameField.GetCell(x, y);
+    if (this.status == GameStatus.START) {
       this.GenerateMines(x, y);
-      this.state = "IN_PROGRESS";
+      this.status = GameStatus.IN_PROGRESS;
     }
-    if (this.state !== "IN_PROGRESS" || cell.opened) return;
+    if (this.status !== GameStatus.IN_PROGRESS || cell.opened) return;
     if (!cell.flagged) {
       cell.opened = true;
       if (cell.mined) {
-        this.state = "DEFEAT";
-        this.eventQueue.push({ type: "DEFEAT" });
+        this.status = GameStatus.DEFEAT;
+        this.eventQueue.push({ type: EventType.DEFEAT });
       } else {
         this.exploreMap(x, y);
         if (this.isWin()) {
-          this.state = "WIN";
-          this.eventQueue.push({ type: "WIN" });
+          this.status = GameStatus.WIN;
+          this.eventQueue.push({ type: EventType.WIN });
         }
       }
     }
@@ -128,7 +151,7 @@ export class GameModel {
     let opened = 0;
     for (let x = 0; x < CELLS_X; x++) {
       for (let y = 0; y < CELLS_Y; y++) {
-        const cell = this.getCell(x, y);
+        const cell = this.gameField.GetCell(x, y);
         if (cell.opened) opened++;
       }
     }
@@ -139,7 +162,7 @@ export class GameModel {
     let flags = 0;
     for (let x = 0; x < CELLS_X; x++) {
       for (let y = 0; y < CELLS_Y; y++) {
-        const cell = this.getCell(x, y);
+        const cell = this.gameField.GetCell(x, y);
         if (cell.flagged) flags++;
       }
     }
@@ -147,7 +170,7 @@ export class GameModel {
   }
 
   private exploreMap(startX: number, startY: number) {
-    const startingCell = this.getCell(startX, startY);
+    const startingCell = this.gameField.GetCell(startX, startY);
     const mines = this.getNearbyMines(startX, startY);
     startingCell.opened = true;
     if (mines) {
@@ -155,7 +178,7 @@ export class GameModel {
       return;
     }
     this.GetBoundIterator(startX, startY).map(({ x, y }) => {
-      const cell = this.getCell(x, y);
+      const cell = this.gameField.GetCell(x, y);
       if (cell.opened) return; // do not check already opened cell
       this.exploreMap(x, y);
     })
@@ -164,7 +187,7 @@ export class GameModel {
   private getNearbySomething(startX: number, startY: number, key: keyof Cell) {
     let nearbySomething = 0;
     this.GetBoundIterator(startX, startY).map(({ x, y }) => {
-      const cell = this.getCell(x, y);
+      const cell = this.gameField.GetCell(x, y);
       if (cell[key]) nearbySomething++;
     }
     )
@@ -179,9 +202,9 @@ export class GameModel {
     return this.getNearbySomething(startX, startY, "flagged");
   }
 
-  flagAt(x: number, y: number) {
-    const cell = this.getCell(x, y);
-    if (this.state !== "IN_PROGRESS" || cell.opened) return;
+  FlagAt(x: number, y: number) {
+    const cell = this.gameField.GetCell(x, y);
+    if (this.status !== GameStatus.IN_PROGRESS || cell.opened) return;
     cell.flagged = !cell.flagged;
   }
 }

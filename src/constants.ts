@@ -1,4 +1,4 @@
-import { Difficulty, GameState } from "./types";
+import { Difficulty, GameStatus } from "./types";
 
 export const FPS = 1000 / 24;
 
@@ -11,10 +11,13 @@ export const ID = {
   optionsBtn: "options-btn",
   playBtn: "play-btn",
   menuPopup: "menu-popup",
-  easyVal: "easy-val",
-  mediumVal: "medium-val",
-  hardVal: "hard-val",
-  impossibleVal: "impossible-val",
+}
+
+export const DifficultyInputID: Record<Difficulty, string> = {
+  [Difficulty.easy]: "easy",
+  [Difficulty.medium]: "medium",
+  [Difficulty.hard]: "hard",
+  [Difficulty.impossible]: "impossible",
 }
 
 export const CLASS = {
@@ -25,12 +28,12 @@ export const NAME = {
   difficulty: "difficulty",
 }
 
-export const StatusText: Record<GameState, string> = {
-  START: "Waiting to start",
-  DEFEAT: "Defeat",
-  IN_PROGRESS: "In progress",
-  PAUSE: "Pause",
-  WIN: "Win",
+export const StatusText: Record<GameStatus, string> = {
+  [GameStatus.START]: "Waiting to start",
+  [GameStatus.DEFEAT]: "Defeat",
+  [GameStatus.IN_PROGRESS]: "In progress",
+  [GameStatus.PAUSE]: "Pause",
+  [GameStatus.WIN]: "Win",
 }
 
 const OFFSET_X = 20;
@@ -46,13 +49,13 @@ export const FLAG_SIZES_X = 20;
 export const FLAG_SIZES_Y = 20;
 
 export const DifficultyMines: Record<Difficulty, number> = {
-  easy: 10,
-  medium: 15,
-  hard: 20,
-  impossible: 25,
+  [Difficulty.easy]: 10,
+  [Difficulty.medium]: 15,
+  [Difficulty.hard]: 20,
+  [Difficulty.impossible]: 25,
 }
 
-export enum DIFFICULTY {
+export enum DifficultyValues {
   EASY = 10, MEDIUM = 15, HARD = 20, Impossible = 25
 };
 
