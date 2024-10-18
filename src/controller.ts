@@ -117,8 +117,8 @@ export class GameController {
 
   private SetupTelegramEvents() {
     if (!Telegram) return;
-    Telegram.WebView.onEvent("popupClosed", this.OnPopupClosed);
-    Telegram.WebApp.onEvent("popupClosed", this.OnPopupClosed);
+    Telegram.WebView.onEvent("popup_closed", this.OnPopupClosed);
+    Telegram.WebApp.onEvent("popup_closed", this.OnPopupClosed);
     Telegram.WebApp.BackButton.onClick = this.OnPopupClosed;
     Telegram.WebApp.MainButton.onClick = this.OnPopupClosed;
     Telegram.WebApp.SecondaryButton.onClick = this.OnPopupClosed;

@@ -2,7 +2,7 @@
 
 declare var Telegram: undefined | null | {
     WebApp: {
-        onEvent: (eventType: "popupClosed", callback: (...any) => void) => void;
+        onEvent: (eventType: "popup_closed", callback: (...any) => void) => void;
         SecondaryButton: {
             onClick: (...any) => void;
         }
@@ -14,6 +14,6 @@ declare var Telegram: undefined | null | {
         }
     }
     WebView: {
-        onEvent: (eventType: "popupClosed", callback: (...any) => void) => void;
+        onEvent: (eventType: "popup_closed", callback: (...any) => void) => void;
     }
 }
