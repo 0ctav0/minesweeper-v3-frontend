@@ -105,8 +105,11 @@ export class GameController {
       this.model.OpenAround(x, y);
     };
     // on save
-    window.onbeforeunload = () => {
-      GameState.Save(this.model);
+    document.onvisibilitychange = () => {
+      if (document.hidden) {
+        console.log("save the game");
+        GameState.Save(this.model);
+      }
     }
   }
 
