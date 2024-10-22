@@ -3,3 +3,5 @@ export enum EventType { NONE, DEFEAT, WIN }
 export type Event = { type: EventType; payload?: any };
 
 export enum Difficulty { EASY, MEDIUM, HARD, IMPOSSIBLE };
+
+export type CallbackControlRes = void | "break" | "continue";

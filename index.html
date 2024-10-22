@@ -9,53 +9,55 @@
 </head>
 
 <body>
-  <div id="info-panel">
-    <button id="play-btn" class="icon-btn"><img alt="Play" src="img/refresh.svg" width="24px" /></button>
-    <div class="element">
-      <div class="img"></div>
-      <span id="flags"></span>
-    </div>
-    <div class="element">
-      <button id="options-btn" class="icon-btn"><img alt="Options" src="img/options.svg" width="24px" /></button>
-    </div>
-  </div>
-  <div id="game-panel">
-    <div id="menu-popup">
-      <div class="horiz">
-        <h1 id="status">Status</h1>
-        <button id="sound-btn" class="icon-btn"><img alt="Sound" src="img/sound.svg" width="24px" /></button>
+  <div>
+    <div id="info-panel">
+      <button id="play-btn" class="icon-btn"><img alt="Play" src="img/refresh.svg" width="24px" /></button>
+      <div class="element">
+        <div class="img"></div>
+        <span id="flags"></span>
       </div>
-      <div id="grid">
-        <div class="difficulty">
-          <input type="radio" id="easy" name="difficulty" />
-          <label for="easy">Easy 10%</label>
-        </div>
-
-        <h2 id="easy-val">N</h2>
-
-        <div class="difficulty">
-          <input type="radio" id="medium" name="difficulty" />
-          <label for="medium">Medium 15%</label>
-        </div>
-
-        <h2 id="medium-val">N</h2>
-
-        <div class="difficulty">
-          <input type="radio" id="hard" name="difficulty" />
-          <label for="hard">Hard 20%</label>
-        </div>
-
-        <h2 id="hard-val">N</h2>
-
-        <div class="difficulty">
-          <input type="radio" id="impossible" name="difficulty" />
-          <label for="impossible">Impossible 25%</label>
-        </div>
-
-        <h2 id="impossible-val">N</h2>
+      <div class="element">
+        <button id="options-btn" class="icon-btn"><img alt="Options" src="img/options.svg" width="24px" /></button>
       </div>
     </div>
-    <canvas id="game">Your browser doesn't support canvas tag element</canvas>
+    <div id="game-panel">
+      <div id="menu-popup">
+        <div class="horiz">
+          <h1 id="status">Status</h1>
+          <button id="sound-btn" class="icon-btn"><img alt="Sound" src="img/sound.svg" width="24px" /></button>
+        </div>
+        <div id="grid">
+          <div class="difficulty">
+            <input type="radio" id="easy" name="difficulty" />
+            <label for="easy">Easy 10%</label>
+          </div>
+
+          <h2 id="easy-val">N</h2>
+
+          <div class="difficulty">
+            <input type="radio" id="medium" name="difficulty" />
+            <label for="medium">Medium 15%</label>
+          </div>
+
+          <h2 id="medium-val">N</h2>
+
+          <div class="difficulty">
+            <input type="radio" id="hard" name="difficulty" />
+            <label for="hard">Hard 20%</label>
+          </div>
+
+          <h2 id="hard-val">N</h2>
+
+          <div class="difficulty">
+            <input type="radio" id="impossible" name="difficulty" />
+            <label for="impossible">Impossible 25%</label>
+          </div>
+
+          <h2 id="impossible-val">N</h2>
+        </div>
+      </div>
+      <canvas id="game">Your browser doesn't support canvas tag element</canvas>
+    </div>
   </div>
   <script type="module" src="/src/main.ts"></script>
 </body>

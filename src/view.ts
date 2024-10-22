@@ -1,7 +1,5 @@
 import {
   BACKGROUND_COLOR,
-  CELLS_X,
-  CELLS_Y,
   CELL_WIDTH,
   CELL_HEIGHT,
   COLOR_NUMBERS,
@@ -12,7 +10,7 @@ import {
   NUMBER_Y_OFFSET,
 } from "./constants";
 import { GameController } from "./controller";
-import { GameModel } from "./model";
+import { GameModel } from "./model/GameModel";
 import { images } from "./resources";
 
 export function renderSelectedCell(controller: GameController) {
@@ -28,8 +26,8 @@ export function renderSelectedCell(controller: GameController) {
  * Called each frame, in game loop
  */
 export function drawCanvas(ctx: CanvasRenderingContext2D, model: GameModel) {
-  for (let x = 0; x < CELLS_X; x++) {
-    for (let y = 0; y < CELLS_Y; y++) {
+  for (let x = 0; x < model.gameField.cellsX; x++) {
+    for (let y = 0; y < model.gameField.cellsY; y++) {
       const cell = model.gameField.GetCell(x, y);
       if (cell.opened) {
         // open cell
@@ -110,14 +108,11 @@ export function drawImageAt(
   );
 }
 
-export function initContext(ctx: CanvasRenderingContext2D) {
-  ctx.font = NUMBER_FONT;
-}
-
-export function initCanvas(canvas: HTMLCanvasElement) {
+export function initCanvas(cellsX: number, cellsY: number, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
   canvas.style.background = BACKGROUND_COLOR;
-  canvas.width = CELLS_X * CELL_WIDTH;
-  canvas.height = CELLS_Y * CELL_HEIGHT;
+  canvas.width = cellsX * CELL_WIDTH;
+  canvas.height = cellsY * CELL_HEIGHT;
+  ctx.font = NUMBER_FONT;
 }
 
 export function initInformationPanel(mines: number) {

@@ -2,20 +2,17 @@ import {
   drawCanvas,
   getCellNumberByOffset,
   initCanvas,
-  initContext,
   initInformationPanel,
   renderSelectedCell,
   WriteMinesLeft,
 } from "./view";
 import {
-  CELLS_X,
-  CELLS_Y,
   CELL_WIDTH,
   CELL_HEIGHT,
   FPS,
   ID,
 } from "./constants";
-import { GameModel } from "./model";
+import { GameModel } from "./model/GameModel";
 import { sounds } from "./resources";
 import { SoundSystem } from "./sound-system";
 import { MenuPopup } from "./menu-popup/menu-popup";
@@ -49,9 +46,7 @@ export class GameController {
       gameController: this,
       onPlay: this.OnPlay
     });
-
-    initCanvas(canvas);
-    initContext(ctx);
+    initCanvas(this.model.gameField.cellsX, this.model.gameField.cellsY, canvas, this.ctx);
     initInformationPanel(this.model.mines);
     this.InitHandlers();
     this.gameLoop();
@@ -60,9 +55,10 @@ export class GameController {
 
   private OnPlay = () => {
     this.model.NewGame(MenuPopup.GetDifficultyFromInput());
+    initCanvas(this.model.gameField.cellsX, this.model.gameField.cellsY, this.canvas, this.ctx);
     this.EnableContextMenu(false);
     this.menu.PreventMenuOpen();
-    WriteMinesLeft(this.model.getFlagsNumber(), this.model.mines);
+    WriteMinesLeft(this.model.GetFlagsNumber(), this.model.mines);
     this.menu.ToggleShow(false);
   }
 
@@ -87,7 +83,7 @@ export class GameController {
     // on hover show selected cell
     this.canvas.onmousemove = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
-      if (x >= 0 && x < CELLS_X && y >= 0 && y < CELLS_Y)
+      if (x >= 0 && x < this.model.gameField.cellsX && y >= 0 && y < this.model.gameField.cellsY)
         this.selectedCell = { x, y };
     };
     this.canvas.onpointerdown = (event) => {
@@ -98,7 +94,7 @@ export class GameController {
           break;
         case 2: // right click
           this.model.FlagAt(x, y);
-          const flags = this.model.getFlagsNumber();
+          const flags = this.model.GetFlagsNumber();
           WriteMinesLeft(flags, this.model.mines);
           break;
       }
@@ -114,7 +110,7 @@ export class GameController {
       }
       else {
         this.model.FlagAt(x, y);
-        const flags = this.model.getFlagsNumber();
+        const flags = this.model.GetFlagsNumber();
         WriteMinesLeft(flags, this.model.mines);
         navigator.vibrate(5);
       }
