@@ -23,6 +23,8 @@ import { getById } from "./helpers";
 import { EventType, GameStatus } from "./types";
 import { GameState } from "./GameState";
 
+const DELAY_TO_OPEN_MS = 150;
+
 
 /**
  * Used to interact with user and change the model. Makes View and Model to work together
@@ -30,6 +32,7 @@ import { GameState } from "./GameState";
 export class GameController {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  lastClickMS: number | null = null;
   selectedCell?: { x: number; y: number };
   model: GameModel;
   soundSystem: SoundSystem;
@@ -87,22 +90,35 @@ export class GameController {
       if (x >= 0 && x < CELLS_X && y >= 0 && y < CELLS_Y)
         this.selectedCell = { x, y };
     };
-    // on click
-    this.canvas.onmousedown = (event) => {
+    this.canvas.onpointerdown = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
       switch (event.button) {
-        case 2: //right click
+        case 0: // left click
+          this.lastClickMS = new Date().getTime();
+          break;
+        case 2: // right click
           this.model.FlagAt(x, y);
           const flags = this.model.getFlagsNumber();
           WriteMinesLeft(flags, this.model.mines);
           break;
       }
     };
-    this.canvas.onclick = (event) => {
+    this.canvas.onpointerup = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
-      this.model.OpenAt(x, y);
-      this.model.OpenAround(x, y);
-    };
+      if (!this.lastClickMS) return;
+      const delay = new Date().getTime() - this.lastClickMS;
+      this.lastClickMS = null;
+      if (delay <= DELAY_TO_OPEN_MS) {
+        this.model.OpenAt(x, y);
+        this.model.OpenAround(x, y);
+      }
+      else {
+        this.model.FlagAt(x, y);
+        const flags = this.model.getFlagsNumber();
+        WriteMinesLeft(flags, this.model.mines);
+        navigator.vibrate(5);
+      }
+    }
     // on save
     document.onvisibilitychange = () => {
       if (document.hidden) {

@@ -25,6 +25,7 @@ body {
   align-items: center;
   background-color: lightcoral;
   height: 100vh;
+  overflow-y: hidden;
 }
 
 .horiz {
