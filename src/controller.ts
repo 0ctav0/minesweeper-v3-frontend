@@ -1,11 +1,6 @@
 import {
-  drawCanvas,
-  getCellNumberByOffset,
-  initCanvas,
-  initInformationPanel,
-  renderSelectedCell,
-  WriteMinesLeft,
-} from "./view";
+  Canvas,
+} from "./Canvas";
 import {
   CELL_WIDTH,
   CELL_HEIGHT,
@@ -19,6 +14,7 @@ import { MenuPopup } from "./menu-popup/menu-popup";
 import { getById } from "./helpers";
 import { EventType, GameStatus } from "./types";
 import { GameState } from "./GameState";
+import { initInformationPanel, writeMinesLeft } from "./ui/ui";
 
 const DELAY_TO_OPEN_MS = 150;
 
@@ -27,26 +23,22 @@ const DELAY_TO_OPEN_MS = 150;
  * Used to interact with user and change the model. Makes View and Model to work together
  */
 export class GameController {
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+  canvas: Canvas;
   lastClickMS: number | null = null;
   selectedCell?: { x: number; y: number };
   model: GameModel;
   soundSystem: SoundSystem;
   menu: MenuPopup;
 
-  constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("canvas's 2d context is null");
-    this.ctx = ctx;
+  constructor() {
+    this.canvas = new Canvas;
     this.model = GameState.Load() ?? GameModel.Create();
     this.soundSystem = new SoundSystem();
     this.menu = new MenuPopup({
       gameController: this,
       onPlay: this.OnPlay
     });
-    initCanvas(this.model.gameField.cellsX, this.model.gameField.cellsY, canvas, this.ctx);
+    this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
     initInformationPanel(this.model.mines);
     this.InitHandlers();
     this.gameLoop();
@@ -55,10 +47,10 @@ export class GameController {
 
   private OnPlay = () => {
     this.model.NewGame(MenuPopup.GetDifficultyFromInput());
-    initCanvas(this.model.gameField.cellsX, this.model.gameField.cellsY, this.canvas, this.ctx);
+    this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
     this.EnableContextMenu(false);
     this.menu.PreventMenuOpen();
-    WriteMinesLeft(this.model.GetFlagsNumber(), this.model.mines);
+    writeMinesLeft(this.model.GetFlagsNumber(), this.model.mines);
     this.menu.ToggleShow(false);
   }
 
@@ -72,8 +64,8 @@ export class GameController {
   private GetCellNumberByMouse(event: MouseEvent) {
     const offsetX = event.offsetX;
     const offsetY = event.offsetY;
-    const x = getCellNumberByOffset(offsetX, CELL_WIDTH);
-    const y = getCellNumberByOffset(offsetY, CELL_HEIGHT);
+    const x = this.canvas.GetCellNumberByOffset(offsetX, CELL_WIDTH);
+    const y = this.canvas.GetCellNumberByOffset(offsetY, CELL_HEIGHT);
     return { x, y };
   }
 
@@ -81,12 +73,12 @@ export class GameController {
     // disable context menu
     this.EnableContextMenu(false);
     // on hover show selected cell
-    this.canvas.onmousemove = (event) => {
+    this.canvas.el.onmousemove = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
       if (x >= 0 && x < this.model.gameField.cellsX && y >= 0 && y < this.model.gameField.cellsY)
         this.selectedCell = { x, y };
     };
-    this.canvas.onpointerdown = (event) => {
+    this.canvas.el.onpointerdown = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
       switch (event.button) {
         case 0: // left click
@@ -95,11 +87,11 @@ export class GameController {
         case 2: // right click
           this.model.FlagAt(x, y);
           const flags = this.model.GetFlagsNumber();
-          WriteMinesLeft(flags, this.model.mines);
+          writeMinesLeft(flags, this.model.mines);
           break;
       }
     };
-    this.canvas.onpointerup = (event) => {
+    this.canvas.el.onpointerup = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
       if (!this.lastClickMS) return;
       const delay = new Date().getTime() - this.lastClickMS;
@@ -111,7 +103,7 @@ export class GameController {
       else {
         this.model.FlagAt(x, y);
         const flags = this.model.GetFlagsNumber();
-        WriteMinesLeft(flags, this.model.mines);
+        writeMinesLeft(flags, this.model.mines);
         navigator.vibrate(5);
       }
     }
@@ -124,7 +116,7 @@ export class GameController {
   }
 
   private EnableContextMenu(enable: boolean) {
-    this.canvas.oncontextmenu = () => enable;
+    this.canvas.el.oncontextmenu = () => enable;
   }
 
   private gameLoop = () => {
@@ -160,10 +152,10 @@ export class GameController {
   }
 
   private render() {
-    drawCanvas(this.ctx, this.model);
+    this.canvas.Draw(this.model);
 
     if (this.model.status !== GameStatus.IN_PROGRESS && this.model.status !== GameStatus.START) return;
 
-    renderSelectedCell(this);
+    this.canvas.RenderSelectedCell(this);
   }
 }
