@@ -24,7 +24,8 @@ const DELAY_TO_OPEN_MS = 150;
  */
 export class GameController {
   canvas: Canvas;
-  lastClickMS: number | null = null;
+  clickStartedAt: number = 0;
+  isPointerUp: boolean = false;
   selectedCell?: { x: number; y: number };
   model: GameModel;
   soundSystem: SoundSystem;
@@ -41,7 +42,7 @@ export class GameController {
     this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
     initInformationPanel(this.model.mines);
     this.InitHandlers();
-    this.gameLoop();
+    this.GameLoop();
     this.InitOptionsBtn();
   }
 
@@ -82,7 +83,9 @@ export class GameController {
       const { x, y } = this.GetCellNumberByMouse(event);
       switch (event.button) {
         case 0: // left click
-          this.lastClickMS = new Date().getTime();
+          this.clickStartedAt = new Date().getTime();
+          this.isPointerUp = false;
+          this.WaitingClick(x, y);
           break;
         case 2: // right click
           this.model.FlagAt(x, y);
@@ -91,21 +94,8 @@ export class GameController {
           break;
       }
     };
-    this.canvas.el.onpointerup = (event) => {
-      const { x, y } = this.GetCellNumberByMouse(event);
-      if (!this.lastClickMS) return;
-      const delay = new Date().getTime() - this.lastClickMS;
-      this.lastClickMS = null;
-      if (delay <= DELAY_TO_OPEN_MS) {
-        this.model.OpenAt(x, y);
-        this.model.OpenAround(x, y);
-      }
-      else {
-        this.model.FlagAt(x, y);
-        const flags = this.model.GetFlagsNumber();
-        writeMinesLeft(flags, this.model.mines);
-        navigator.vibrate(5);
-      }
+    this.canvas.el.onpointerup = () => {
+      this.isPointerUp = true;
     }
     // on save
     document.onvisibilitychange = () => {
@@ -119,13 +109,7 @@ export class GameController {
     this.canvas.el.oncontextmenu = () => enable;
   }
 
-  private gameLoop = () => {
-    this.manageEventQueue();
-    this.render();
-    setTimeout(() => requestAnimationFrame(this.gameLoop), FPS);
-  };
-
-  private manageEventQueue() {
+  private ManageEventQueue() {
     const event = this.model.eventQueue.pop();
     if (event) {
       switch (event.type) {
@@ -151,7 +135,31 @@ export class GameController {
     this.menu.RequestMenuOpen();
   }
 
-  private render() {
+  // Arrow functions save context compared to classic functions/methods
+  private WaitingClick = (x: number, y: number) => {
+    const delay = new Date().getTime() - this.clickStartedAt;
+    if (this.isPointerUp && delay <= DELAY_TO_OPEN_MS) {
+      this.model.OpenAt(x, y);
+      this.model.OpenAround(x, y);
+      return;
+    }
+    if (delay > DELAY_TO_OPEN_MS) {
+      this.model.FlagAt(x, y);
+      const flags = this.model.GetFlagsNumber();
+      writeMinesLeft(flags, this.model.mines);
+      navigator.vibrate(5);
+      return;
+    }
+    setTimeout(() => this.WaitingClick(x, y), 5);
+  }
+
+  private GameLoop = () => {
+    this.ManageEventQueue();
+    this.Render();
+    setTimeout(() => requestAnimationFrame(this.GameLoop), FPS);
+  };
+
+  private Render() {
     this.canvas.Draw(this.model);
 
     if (this.model.status !== GameStatus.IN_PROGRESS && this.model.status !== GameStatus.START) return;
