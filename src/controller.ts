@@ -27,6 +27,7 @@ export class GameController {
   clickStartedAt: number = 0;
   isPointerUp: boolean = false;
   selectedCell?: { x: number; y: number };
+  pressedCell?: { x: number, y: number };
   model: GameModel;
   soundSystem: SoundSystem;
   menu: MenuPopup;
@@ -41,23 +42,46 @@ export class GameController {
     });
     this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
     initInformationPanel(this.model.mines);
-    this.InitHandlers();
+    this.AttachHandlers();
     this.GameLoop();
     this.InitOptionsBtn();
+    this.OnSave();
   }
 
   private OnPlay = () => {
+    this.AttachHandlers();
     this.model.NewGame(MenuPopup.GetDifficultyFromInput());
     this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
-    this.EnableContextMenu(false);
-    this.menu.PreventMenuOpen();
     writeMinesLeft(this.model.GetFlagsNumber(), this.model.mines);
+    this.menu.PreventMenuOpen();
     this.menu.ToggleShow(false);
+  }
+
+  private OnOpen = (x: number, y: number) => {
+    this.model.OpenAt(x, y);
+    this.model.OpenAround(x, y);
+  }
+
+  private OnFlag = (x: number, y: number) => {
+    const cell = this.model.gameField.GetCell(x, y);
+    if (cell.opened) return;
+    this.model.FlagAt(x, y);
+    navigator.vibrate(5);
+    const flags = this.model.GetFlagsNumber();
+    writeMinesLeft(flags, this.model.mines);
+  }
+
+  private OnSave = () => {
+    // on save
+    document.onvisibilitychange = () => {
+      if (document.hidden) {
+        GameState.Save(this.model);
+      }
+    }
   }
 
   private InitOptionsBtn() {
     getById(ID.optionsBtn).onclick = () => {
-      this.InitHandlers();
       this.menu.ToggleShow();
     };
   }
@@ -70,8 +94,7 @@ export class GameController {
     return { x, y };
   }
 
-  private InitHandlers() {
-    // disable context menu
+  private AttachHandlers() {
     this.EnableContextMenu(false);
     // on hover show selected cell
     this.canvas.el.onmousemove = (event) => {
@@ -81,6 +104,8 @@ export class GameController {
     };
     this.canvas.el.onpointerdown = (event) => {
       const { x, y } = this.GetCellNumberByMouse(event);
+      this.pressedCell = { x, y };
+      this.model.SetHighlightAround(x, y, true);
       switch (event.button) {
         case 0: // left click
           this.clickStartedAt = new Date().getTime();
@@ -88,21 +113,23 @@ export class GameController {
           this.WaitingClick(x, y);
           break;
         case 2: // right click
-          this.model.FlagAt(x, y);
-          const flags = this.model.GetFlagsNumber();
-          writeMinesLeft(flags, this.model.mines);
+          this.OnFlag(x, y);
           break;
       }
     };
     this.canvas.el.onpointerup = () => {
       this.isPointerUp = true;
+      if (!this.pressedCell) return
+      this.model.SetHighlightAround(this.pressedCell.x, this.pressedCell.y, false);
+      this.pressedCell = undefined;
     }
-    // on save
-    document.onvisibilitychange = () => {
-      if (document.hidden) {
-        GameState.Save(this.model);
-      }
-    }
+  }
+
+  private DetachHandlers() {
+    this.EnableContextMenu(true);
+    this.canvas.el.onmousemove = null;
+    this.canvas.el.onpointerdown = null;
+    this.canvas.el.onpointerup = null;
   }
 
   private EnableContextMenu(enable: boolean) {
@@ -124,13 +151,13 @@ export class GameController {
   }
 
   private OnDefeat() {
-    this.EnableContextMenu(true);
+    this.DetachHandlers();
     this.soundSystem.Play(sounds.death);
     this.menu.RequestMenuOpen();
   }
 
   private OnWin() {
-    this.EnableContextMenu(true);
+    this.DetachHandlers();
     this.soundSystem.Play(sounds.win);
     this.menu.RequestMenuOpen();
   }
@@ -139,15 +166,11 @@ export class GameController {
   private WaitingClick = (x: number, y: number) => {
     const delay = new Date().getTime() - this.clickStartedAt;
     if (this.isPointerUp && delay <= DELAY_TO_OPEN_MS) {
-      this.model.OpenAt(x, y);
-      this.model.OpenAround(x, y);
+      this.OnOpen(x, y);
       return;
     }
     if (delay > DELAY_TO_OPEN_MS) {
-      this.model.FlagAt(x, y);
-      const flags = this.model.GetFlagsNumber();
-      writeMinesLeft(flags, this.model.mines);
-      navigator.vibrate(5);
+      this.OnFlag(x, y);
       return;
     }
     setTimeout(() => this.WaitingClick(x, y), 5);

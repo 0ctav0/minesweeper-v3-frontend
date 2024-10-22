@@ -100,6 +100,16 @@ export class GameModel {
     cell.flagged = !cell.flagged;
   }
 
+  SetHighlightAround(originX: number, originY: number, value: boolean) {
+    const cell = this.gameField.GetCell(originX, originY);
+    if (!cell.opened) return;
+    this.gameField.GetAroundIterator(originX, originY).map(({ x, y }) => {
+      if (originX === x && originY === y) return;
+      const cell = this.gameField.GetCell(x, y);
+      cell.highlighted = value;
+    })
+  }
+
   private IsWin() {
     let opened = 0;
     this.gameField.GetIterator().map(({ x, y }) => {

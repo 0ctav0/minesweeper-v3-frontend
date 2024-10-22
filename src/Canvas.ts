@@ -42,7 +42,7 @@ export class Canvas {
       for (let y = 0; y < model.gameField.cellsY; y++) {
         const cell = model.gameField.GetCell(x, y);
         if (cell.opened) {
-          // open cell
+          // cell is opened
           this.ctx.clearRect(
             x * CELL_WIDTH,
             y * CELL_HEIGHT,
@@ -61,9 +61,10 @@ export class Canvas {
             this.ctx.fillStyle = BACKGROUND_COLOR;
           }
         } else {
-          // not open cell
+          // cell is not opened
+          const img = cell.highlighted && !cell.flagged ? images.selectedCell : images.cell;
           this.ctx.drawImage(
-            images.cell,
+            img,
             x * CELL_WIDTH,
             y * CELL_HEIGHT,
             CELL_WIDTH,
