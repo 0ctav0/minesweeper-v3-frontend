@@ -86,9 +86,19 @@ export class GameController {
     };
   }
 
-  private GetCellNumberByMouse(event: MouseEvent) {
-    const offsetX = event.offsetX;
-    const offsetY = event.offsetY;
+  private GetCellNumberByUIEvent(event: MouseEvent | TouchEvent) {
+    let offsetX = 0;
+    let offsetY = 0;
+    if (event instanceof MouseEvent) {
+      offsetX = event.offsetX;
+      offsetY = event.offsetY;
+    } else if (event instanceof TouchEvent) {
+      const target = event.target as HTMLElement;
+      const bcr = target.getBoundingClientRect();
+      offsetX = event.targetTouches[0].clientX - bcr.x;
+      offsetY = event.targetTouches[0].clientY - bcr.y;
+    }
+    else throw new Error("Couldn't determine the type of the event")
     const x = this.canvas.GetCellNumberByOffset(offsetX, CELL_WIDTH);
     const y = this.canvas.GetCellNumberByOffset(offsetY, CELL_HEIGHT);
     return { x, y };
@@ -98,12 +108,12 @@ export class GameController {
     this.EnableContextMenu(false);
     // on hover show selected cell
     this.canvas.el.onmousemove = (event) => {
-      const { x, y } = this.GetCellNumberByMouse(event);
+      const { x, y } = this.GetCellNumberByUIEvent(event);
       if (x >= 0 && x < this.model.gameField.cellsX && y >= 0 && y < this.model.gameField.cellsY)
         this.selectedCell = { x, y };
     };
     this.canvas.el.onpointerdown = (event) => {
-      const { x, y } = this.GetCellNumberByMouse(event);
+      const { x, y } = this.GetCellNumberByUIEvent(event);
       this.pressedCell = { x, y };
       this.model.SetHighlightAround(x, y, true);
       switch (event.button) {
@@ -117,6 +127,20 @@ export class GameController {
           break;
       }
     };
+    this.canvas.el.ontouchmove = (event) => {
+      const { x, y } = this.GetCellNumberByUIEvent(event);
+      if (this.pressedCell) {
+        this.model.SetHighlightAround(this.pressedCell.x, this.pressedCell.y, false);
+      }
+      this.model.SetHighlightAround(x, y, true);
+      this.pressedCell = { x, y };
+    }
+    this.canvas.el.ontouchend = () => {
+      if (this.pressedCell) {
+        this.model.SetHighlightAround(this.pressedCell.x, this.pressedCell.y, false);
+      }
+      this.pressedCell = undefined;
+    }
     this.canvas.el.onpointerup = () => {
       this.isPointerUp = true;
       if (!this.pressedCell) return
