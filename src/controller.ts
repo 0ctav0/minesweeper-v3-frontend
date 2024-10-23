@@ -15,12 +15,14 @@ import { getById } from "./helpers";
 import { EventType, GameStatus } from "./types";
 import { GameState } from "./GameState";
 import { initInformationPanel, writeMinesLeft } from "./ui/ui";
+import { InfoPopup } from "./info-popup/InfoPopup";
+import { Storage } from "./Storage";
 
 const DELAY_TO_OPEN_MS = 150;
 
 
 /**
- * Used to interact with user and change the model. Makes View and Model to work together
+ * Used to interact with user and change the model. Makes Canvas and Model to work together
  */
 export class GameController {
   canvas: Canvas;
@@ -31,6 +33,7 @@ export class GameController {
   model: GameModel;
   soundSystem: SoundSystem;
   menu: MenuPopup;
+  info: InfoPopup;
 
   constructor() {
     this.canvas = new Canvas;
@@ -38,8 +41,13 @@ export class GameController {
     this.soundSystem = new SoundSystem();
     this.menu = new MenuPopup({
       gameController: this,
-      onPlay: this.OnPlay
+      onPlay: this.OnPlay,
+      onInfo: this.OnInfo,
     });
+    this.info = new InfoPopup;
+    if (!Storage.IsTutorialShowed()) {
+      this.OnInfo();
+    }
     this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
     initInformationPanel(this.model.mines);
     this.AttachHandlers();
@@ -55,6 +63,14 @@ export class GameController {
     writeMinesLeft(this.model.GetFlagsNumber(), this.model.mines);
     this.menu.PreventMenuOpen();
     this.menu.ToggleShow(false);
+  }
+
+  private OnInfo = () => {
+    this.info.Show(true, [
+      "1. Short touch is to open a cell",
+      "2. Longer touch is to flag a cell",
+      "3. Holding over an open cell, it highlights around cells"
+    ]);
   }
 
   private OnOpen = (x: number, y: number) => {

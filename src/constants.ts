@@ -10,7 +10,10 @@ export const ID = {
   soundBtn: "sound-btn",
   optionsBtn: "options-btn",
   playBtn: "play-btn",
+  infoBtn: "info-btn",
   menuPopup: "menu-popup",
+  infoPopup: "info-popup",
+  closeBtn: "close-btn",
 }
 
 export const DifficultyInputID: Record<Difficulty, string> = {

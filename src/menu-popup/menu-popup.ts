@@ -5,7 +5,7 @@ import { Difficulty, GameStatus } from "../types";
 import "./menu-popup.css"
 
 const POPUP_DELAY = 2000;
-type Param = { gameController: GameController, onPlay: () => void }
+type Param = { gameController: GameController, onPlay: () => void, onInfo: () => void }
 
 export class MenuPopup {
     private controller: GameController
@@ -16,6 +16,7 @@ export class MenuPopup {
         this.controller = param.gameController;
         this.SetDifficultyInput(this.controller.model.difficulty);
         getById(ID.playBtn).onclick = param.onPlay;
+        getById(ID.infoBtn).onclick = param.onInfo;
     }
 
     private static ParseDifficulty(text: string): Difficulty {

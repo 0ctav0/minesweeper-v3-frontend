@@ -28,6 +28,10 @@ body {
   overflow-y: hidden;
 }
 
+a {
+  color: #ffbe98;
+}
+
 .horiz {
   display: flex;
   gap: 1rem;

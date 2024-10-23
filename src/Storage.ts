@@ -1,6 +1,7 @@
 
 const soundEnabledKey = "soundEnabled";
-const versionKey = "storage-version"
+const versionKey = "storage-version";
+const tutorialKey = "tutorial-showed";
 const version = "0.1";
 
 export class Storage {
@@ -24,6 +25,14 @@ export class Storage {
 
     static SetSoundEnabled(soundEnabled: boolean) {
         Storage.SetItem(soundEnabledKey, String(soundEnabled))
+    }
+
+    static IsTutorialShowed(): boolean {
+        return Storage.GetItem(tutorialKey) === "true";
+    }
+
+    static SetTutorialShowed() {
+        Storage.SetItem(tutorialKey, "true");
     }
 }
 
