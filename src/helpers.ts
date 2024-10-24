@@ -3,6 +3,8 @@ export function random(min: number, maxExclusive: number) {
   return Math.floor(rand);
 }
 
+export const randomSigned = () => Math.random() > 0.5 ? Math.random() : -Math.random();
+
 export function randomSlice() {
   return Math.random().toString().slice(2);
 }

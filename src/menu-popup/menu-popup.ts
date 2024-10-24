@@ -4,7 +4,6 @@ import { getById } from "../helpers";
 import { Difficulty, GameStatus } from "../types";
 import "./menu-popup.css"
 
-const POPUP_DELAY = 2000;
 type Param = { gameController: GameController, onPlay: () => void, onInfo: () => void }
 
 export class MenuPopup {
@@ -45,9 +44,9 @@ export class MenuPopup {
         getById(ID.status).innerText = StatusText[state];
     }
 
-    RequestMenuOpen() {
+    RequestMenuOpen(delay: number) {
         this.timerId = setTimeout(() =>
-            this.ToggleShow(true), POPUP_DELAY);
+            this.ToggleShow(true), delay);
     }
 
     PreventMenuOpen() {

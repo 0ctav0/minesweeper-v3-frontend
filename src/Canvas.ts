@@ -19,11 +19,11 @@ export class Canvas {
 
   constructor() {
     const canvas = document.getElementById("game");
-    if (!(canvas instanceof HTMLCanvasElement)) throw new Error("canvas is not a canvas");
+    if (!(canvas instanceof HTMLCanvasElement)) throw new Error("the canvas is not HTMLCanvasElement");
     this.el = canvas;
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("canvas's 2d context is null");
+    if (!ctx) throw new Error("the canvas's 2d context is null");
     this.ctx = ctx;
   }
 

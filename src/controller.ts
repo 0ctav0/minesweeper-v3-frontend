@@ -4,7 +4,6 @@ import {
 import {
   CELL_WIDTH,
   CELL_HEIGHT,
-  FPS,
   ID,
 } from "./constants";
 import { GameModel } from "./model/GameModel";
@@ -17,8 +16,10 @@ import { GameState } from "./GameState";
 import { initInformationPanel, writeMinesLeft } from "./ui/ui";
 import { InfoPopup } from "./info-popup/InfoPopup";
 import { Storage } from "./Storage";
+import { ConfettiEffect } from "./effects/ConfettiEffect";
 
 const DELAY_TO_OPEN_MS = 150;
+const PLAY_EFFECT_DELAY = 5_000;
 
 
 /**
@@ -34,6 +35,7 @@ export class GameController {
   soundSystem: SoundSystem;
   menu: MenuPopup;
   info: InfoPopup;
+  winEffect: ConfettiEffect;
 
   constructor() {
     this.canvas = new Canvas;
@@ -48,7 +50,10 @@ export class GameController {
     if (!Storage.IsTutorialShowed()) {
       this.OnInfo();
     }
+
     this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
+    this.winEffect = new ConfettiEffect(this.canvas.ctx);
+
     initInformationPanel(this.model.mines);
     this.AttachHandlers();
     this.GameLoop();
@@ -193,13 +198,14 @@ export class GameController {
   private OnDefeat() {
     this.DetachHandlers();
     this.soundSystem.Play(sounds.death);
-    this.menu.RequestMenuOpen();
+    this.menu.RequestMenuOpen(PLAY_EFFECT_DELAY);
   }
 
   private OnWin() {
     this.DetachHandlers();
     this.soundSystem.Play(sounds.win);
-    this.menu.RequestMenuOpen();
+    this.winEffect.Play(PLAY_EFFECT_DELAY);
+    this.menu.RequestMenuOpen(PLAY_EFFECT_DELAY);
   }
 
   // Arrow functions save context compared to classic functions/methods
@@ -219,7 +225,8 @@ export class GameController {
   private GameLoop = () => {
     this.ManageEventQueue();
     this.Render();
-    setTimeout(() => requestAnimationFrame(this.GameLoop), FPS);
+    this.winEffect.Draw();
+    requestAnimationFrame(this.GameLoop);
   };
 
   private Render() {
