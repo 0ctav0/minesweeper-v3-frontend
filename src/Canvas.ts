@@ -10,12 +10,14 @@ import {
   NUMBER_Y_OFFSET,
 } from "./constants";
 import { GameController } from "./controller";
+import { GLCanvas } from "./gl/GLCanvas";
 import { GameModel } from "./model/GameModel";
 import { images } from "./resources";
 
 export class Canvas {
   el: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  glCanvas: GLCanvas;
 
   constructor() {
     const canvas = document.getElementById("game");
@@ -25,12 +27,20 @@ export class Canvas {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("the canvas's 2d context is null");
     this.ctx = ctx;
+
+    const webglCanvas = document.getElementById("webgl") as HTMLCanvasElement;
+    const gl = webglCanvas.getContext("webgl");
+    if (!gl) throw new Error("Unable to initialize WebGL");
+    this.glCanvas = new GLCanvas(gl);
   }
 
   Init(cellsX: number, cellsY: number) {
     this.el.style.background = BACKGROUND_COLOR;
     this.el.width = cellsX * CELL_WIDTH;
     this.el.height = cellsY * CELL_HEIGHT;
+    this.glCanvas.gl.canvas.width = this.ctx.canvas.width;
+    this.glCanvas.gl.canvas.height = this.ctx.canvas.height;
+    this.glCanvas.Draw();
     this.ctx.font = NUMBER_FONT;
   }
 

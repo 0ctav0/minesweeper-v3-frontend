@@ -103,3 +103,8 @@ a {
   margin-left: auto;
   margin-right: auto;
 }
+
+#webgl {
+  position: absolute;
+  pointer-events: none;
+}
