@@ -11,7 +11,28 @@ export class Plane {
         return {
             position: this.InitPositionBuffer(),
             color: this.InitColorBuffers(),
+            textureCoord: this.InitTextureBuffer(),
         }
+    }
+
+    InitTextureBuffer() {
+        const textureCoordBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, textureCoordBuffer);
+
+        const tr = [1, 0];
+        const tl = [0, 0];
+        const bl = [0, 1];
+        const br = [1, 1];
+        const textureCoordinates = [
+            tr,
+            tl,
+            br,
+            bl,
+        ].flat();
+
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), this.gl.STATIC_DRAW);
+
+        return textureCoordBuffer;
     }
 
     InitColorBuffers() {

@@ -59,6 +59,10 @@ export class GameController {
     this.GameLoop();
     this.InitOptionsBtn();
     this.OnSave();
+
+    setTimeout(() => {
+      this.canvas.glCanvas.SetTexture(this.canvas.ctx.canvas.toDataURL());
+    }, 50);
   }
 
   private OnPlay = () => {
@@ -231,6 +235,7 @@ export class GameController {
 
   private Render() {
     this.canvas.Draw(this.model);
+    this.canvas.glCanvas.Draw();
 
     if (this.model.status !== GameStatus.IN_PROGRESS && this.model.status !== GameStatus.START) return;
 

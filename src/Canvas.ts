@@ -28,10 +28,7 @@ export class Canvas {
     if (!ctx) throw new Error("the canvas's 2d context is null");
     this.ctx = ctx;
 
-    const webglCanvas = document.getElementById("webgl") as HTMLCanvasElement;
-    const gl = webglCanvas.getContext("webgl");
-    if (!gl) throw new Error("Unable to initialize WebGL");
-    this.glCanvas = new GLCanvas(gl);
+    this.glCanvas = new GLCanvas;
   }
 
   Init(cellsX: number, cellsY: number) {
@@ -40,7 +37,6 @@ export class Canvas {
     this.el.height = cellsY * CELL_HEIGHT;
     this.glCanvas.gl.canvas.width = this.ctx.canvas.width;
     this.glCanvas.gl.canvas.height = this.ctx.canvas.height;
-    this.glCanvas.Draw();
     this.ctx.font = NUMBER_FONT;
   }
 
@@ -53,7 +49,8 @@ export class Canvas {
         const cell = model.gameField.GetCell(x, y);
         if (cell.opened) {
           // cell is opened
-          this.ctx.clearRect(
+          this.ctx.fillStyle = "grey";
+          this.ctx.fillRect(
             x * CELL_WIDTH,
             y * CELL_HEIGHT,
             CELL_WIDTH,
