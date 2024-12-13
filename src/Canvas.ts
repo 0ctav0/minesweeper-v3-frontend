@@ -19,7 +19,7 @@ export class Canvas {
   ctx: CanvasRenderingContext2D;
   glCanvas: GLCanvas;
 
-  constructor() {
+  constructor(gl: GLCanvas) {
     const canvas = document.getElementById("game");
     if (!(canvas instanceof HTMLCanvasElement)) throw new Error("the canvas is not HTMLCanvasElement");
     this.el = canvas;
@@ -28,7 +28,7 @@ export class Canvas {
     if (!ctx) throw new Error("the canvas's 2d context is null");
     this.ctx = ctx;
 
-    this.glCanvas = new GLCanvas;
+    this.glCanvas = gl;
   }
 
   Init(cellsX: number, cellsY: number) {

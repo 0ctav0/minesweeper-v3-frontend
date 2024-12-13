@@ -9,6 +9,6 @@ varying lowp vec4 vColor;
 varying highp vec2 vTextureCoord;
 
 void main() {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition * vec4(2.1,2.4,1,1);
+    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
     vTextureCoord = aTextureCoord;
 }

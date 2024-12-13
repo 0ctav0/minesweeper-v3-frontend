@@ -83,7 +83,7 @@ export class GameModel {
       cell.opened = true;
       if (cell.mined) {
         this.status = GameStatus.DEFEAT;
-        this.eventQueue.push({ type: EventType.DEFEAT });
+        this.eventQueue.push({ type: EventType.DEFEAT, x, y });
       } else {
         this.ExploreMap(x, y);
         if (this.IsWin()) {

@@ -17,15 +17,17 @@ import { initInformationPanel, writeMinesLeft } from "./ui/ui";
 import { InfoPopup } from "./info-popup/InfoPopup";
 import { Storage } from "./Storage";
 import { ConfettiEffect } from "./effects/ConfettiEffect";
+import { GLCanvas } from "./gl/GLCanvas";
 
 const DELAY_TO_OPEN_MS = 150;
-const PLAY_EFFECT_DELAY = 5_000;
+const PLAY_EFFECT_DELAY = 7_000;
 
 
 /**
  * Used to interact with user and change the model. Makes Canvas and Model to work together
  */
 export class GameController {
+  gl: GLCanvas;
   canvas: Canvas;
   clickStartedAt: number = 0;
   isPointerUp: boolean = false;
@@ -38,7 +40,8 @@ export class GameController {
   winEffect: ConfettiEffect;
 
   constructor() {
-    this.canvas = new Canvas;
+    this.gl = new GLCanvas;
+    this.canvas = new Canvas(this.gl);
     this.model = GameState.Load() ?? GameModel.Create();
     this.soundSystem = new SoundSystem();
     this.menu = new MenuPopup({
@@ -59,13 +62,10 @@ export class GameController {
     this.GameLoop();
     this.InitOptionsBtn();
     this.OnSave();
-
-    setTimeout(() => {
-      this.canvas.glCanvas.SetTexture(this.canvas.ctx.canvas.toDataURL());
-    }, 50);
   }
 
   private OnPlay = () => {
+    this.gl.Stop();
     this.AttachHandlers();
     this.model.NewGame(MenuPopup.GetDifficultyFromInput());
     this.canvas.Init(this.model.gameField.cellsX, this.model.gameField.cellsY);
@@ -190,7 +190,7 @@ export class GameController {
     if (event) {
       switch (event.type) {
         case EventType.DEFEAT:
-          this.OnDefeat();
+          this.OnDefeat(event.x, event.y);
           break;
         case EventType.WIN:
           this.OnWin();
@@ -199,17 +199,23 @@ export class GameController {
     }
   }
 
-  private OnDefeat() {
+  private OnDefeat(x: number, y: number) {
     this.DetachHandlers();
     this.soundSystem.Play(sounds.death);
-    this.menu.RequestMenuOpen(PLAY_EFFECT_DELAY);
+    const posX = x / (this.model.gameField.cellsX - 1);
+    const posY = y / (this.model.gameField.cellsY - 1);
+    setTimeout(() => {
+      this.gl.SetTexture(this.canvas.ctx.canvas.toDataURL());
+      this.gl.Play([posX, posY], PLAY_EFFECT_DELAY);
+    }, 50);
+    // this.menu.RequestMenuOpen(PLAY_EFFECT_DELAY);
   }
 
   private OnWin() {
     this.DetachHandlers();
     this.soundSystem.Play(sounds.win);
     this.winEffect.Play(PLAY_EFFECT_DELAY);
-    this.menu.RequestMenuOpen(PLAY_EFFECT_DELAY);
+    // this.menu.RequestMenuOpen(PLAY_EFFECT_DELAY);
   }
 
   // Arrow functions save context compared to classic functions/methods
