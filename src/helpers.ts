@@ -16,3 +16,7 @@ export const getById = (id: string) => document.querySelector(`#${id}`) as HTMLE
 export const getByName = (name: string) => document.querySelector(`[name="${name}"]`) as HTMLElement;
 
 export const getAllByName = (name: string) => document.querySelectorAll(`[name="${name}"]`) as NodeListOf<HTMLElement>;
+
+export const degToRad = (degree: number) => degree * Math.PI / 180;
+
+export const isPowerOf2 = (value: number) => (value & (value - 1)) === 0;

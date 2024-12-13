@@ -10,14 +10,16 @@ import {
   NUMBER_Y_OFFSET,
 } from "./constants";
 import { GameController } from "./controller";
+import { GLCanvas } from "./gl/GLCanvas";
 import { GameModel } from "./model/GameModel";
 import { images } from "./resources";
 
 export class Canvas {
   el: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  glCanvas: GLCanvas;
 
-  constructor() {
+  constructor(gl: GLCanvas) {
     const canvas = document.getElementById("game");
     if (!(canvas instanceof HTMLCanvasElement)) throw new Error("the canvas is not HTMLCanvasElement");
     this.el = canvas;
@@ -25,12 +27,16 @@ export class Canvas {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("the canvas's 2d context is null");
     this.ctx = ctx;
+
+    this.glCanvas = gl;
   }
 
   Init(cellsX: number, cellsY: number) {
     this.el.style.background = BACKGROUND_COLOR;
     this.el.width = cellsX * CELL_WIDTH;
     this.el.height = cellsY * CELL_HEIGHT;
+    this.glCanvas.gl.canvas.width = this.ctx.canvas.width;
+    this.glCanvas.gl.canvas.height = this.ctx.canvas.height;
     this.ctx.font = NUMBER_FONT;
   }
 
@@ -43,7 +49,8 @@ export class Canvas {
         const cell = model.gameField.GetCell(x, y);
         if (cell.opened) {
           // cell is opened
-          this.ctx.clearRect(
+          this.ctx.fillStyle = "grey";
+          this.ctx.fillRect(
             x * CELL_WIDTH,
             y * CELL_HEIGHT,
             CELL_WIDTH,
